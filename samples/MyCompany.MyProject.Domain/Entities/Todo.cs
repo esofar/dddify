@@ -19,15 +19,15 @@ public class Todo : FullAuditedAggregateRoot<Guid>, ISoftDeletable, IHasConcurre
 
     public Todo() { }
 
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
-    public Colour Colour { get; set; }
+    public Colour Colour { get; set; } = Colour.Blue;
 
     public IList<TodoItem> Items { get; private set; } = new List<TodoItem>();
 
     public bool IsDeleted { get; set; }
 
-    public string ConcurrencyStamp { get; set; }
+    public string ConcurrencyStamp { get; set; } = string.Empty;
 
     public void AddItem(TodoItem item)
     {

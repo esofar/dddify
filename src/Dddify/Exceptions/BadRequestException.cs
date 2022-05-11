@@ -22,5 +22,5 @@ public class BadRequestException : Exception
     {
     }
 
-    public IDictionary<string, string[]> Errors { get; }
+    public IDictionary<string, string[]>? Errors { get; }
 }

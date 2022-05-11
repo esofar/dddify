@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Dddify.AspNetCore.ApiResult;
+﻿namespace Dddify.AspNetCore.ApiResult;
 
 public class ApiResult : IApiResult
 {

@@ -5,5 +5,8 @@
 /// </summary>
 public interface ISoftDeletable
 {
+    /// <summary>
+    /// Determines whether the entity has been deleted.
+    /// </summary>
     public bool IsDeleted { get; set; }
 }

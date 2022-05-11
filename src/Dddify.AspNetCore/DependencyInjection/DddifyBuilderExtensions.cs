@@ -15,7 +15,7 @@ public static class DddifyBuilderExtensions
 {
     public static IDddifyBuilder AddApiResult(this IDddifyBuilder builder)
     {
-        Check.NotNull(builder, nameof(builder));
+        ArgumentNullException.ThrowIfNull(builder);
 
         builder.Services.Configure<MvcOptions>(options =>
         {
@@ -31,8 +31,8 @@ public static class DddifyBuilderExtensions
 
     public static IDddifyBuilder AddLocalization(this IDddifyBuilder builder, Action<AppLocalizationOptions> setupAction = null)
     {
-        Check.NotNull(builder, nameof(builder));
-        Check.NotNull(setupAction, nameof(setupAction));
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(setupAction);
 
         var options = new AppLocalizationOptions();
         setupAction?.Invoke(options);

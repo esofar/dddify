@@ -15,7 +15,7 @@ public static class EnumExtenstions
 
         if (fieldName != null)
         {
-            var attribute = type.GetField(fieldName).GetCustomAttribute<DescriptionAttribute>();
+            var attribute = type?.GetField(fieldName)?.GetCustomAttribute<DescriptionAttribute>();
             return attribute?.Description ?? fieldName;
         }
         else

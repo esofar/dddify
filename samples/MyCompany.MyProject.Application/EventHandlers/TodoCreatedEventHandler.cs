@@ -10,6 +10,7 @@ public class TodoCreatedEventHandler : IDomainEventHandler<TodoCreatedDomainEven
 {
     public Task Handle(TodoCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        throw new NotImplementedException();
+        //return Task.CompletedTask;
     }
 }

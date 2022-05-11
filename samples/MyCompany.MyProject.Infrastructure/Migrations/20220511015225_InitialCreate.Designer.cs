@@ -11,7 +11,7 @@ using MyCompany.MyProject.Infrastructure;
 namespace MyCompany.MyProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220322022933_InitialCreate")]
+    [Migration("20220511015225_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

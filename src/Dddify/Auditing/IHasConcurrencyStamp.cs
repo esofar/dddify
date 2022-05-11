@@ -5,5 +5,8 @@
 /// </summary>
 public interface IHasConcurrencyStamp
 {
+    /// <summary>
+    /// The concurrency stamp for this entity.
+    /// </summary>
     string ConcurrencyStamp { get; set; }
 }

@@ -15,5 +15,5 @@ public class PagedList<T> : IPagedList<T>
 
     public int Total { get; }
 
-    public IEnumerable<T> Items { get; }
+    public IEnumerable<T> Items { get; } = Enumerable.Empty<T>();
 }

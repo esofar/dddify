@@ -1,10 +1,8 @@
-﻿using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Dddify.DependencyInjection;
+using Dddify.Security.Identity;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using Dddify.Security.Identity;
-using Dddify.DependencyInjection;
 
 namespace Dddify.Application.Behaviours;
 

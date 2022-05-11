@@ -4,13 +4,19 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<VersionPrefix>1.0.2</VersionPrefix>
+		<Authors>esofar</Authors>
+		<Description>A lightweight ASP.NET Core framework that follows domain-driven-design best practices and clean architecture.</Description>
+		<PackageProjectUrl>https://dddify.net</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/esofar/dddify</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
 		<PackageReference Include="Scrutor" Version="4.1.0" />
+		<PackageReference Include="MediatR" Version="10.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

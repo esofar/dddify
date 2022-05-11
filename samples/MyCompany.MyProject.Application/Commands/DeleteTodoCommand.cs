@@ -27,7 +27,7 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand>
     {
         var todo = await _context.Todos.FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (todo == null)
+        if (todo is null)
         {
             throw new NotFoundException(nameof(Todo), request.Id);
         }

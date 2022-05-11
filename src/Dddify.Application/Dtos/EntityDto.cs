@@ -7,7 +7,7 @@ public abstract class EntityDto : IEntityDto
 {
     public override string ToString()
     {
-        return $"[DTto: {GetType().Name}]";
+        return $"[Dto: {GetType().Name}]";
     }
 }
 
@@ -21,7 +21,7 @@ public abstract class EntityDto<TKey> : EntityDto, IEntityDto<TKey>
 
     public override string ToString()
     {
-        return $"[DTO: {GetType().Name}] Id = {Id}";
+        return $"[Dto: {GetType().Name}] Id = {Id}";
     }
 }
 

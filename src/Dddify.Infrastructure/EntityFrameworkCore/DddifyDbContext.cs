@@ -8,11 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Dddify.EntityFrameworkCore;
 
@@ -23,7 +19,7 @@ public class DddifyDbContext : DbContext
     private readonly ICurrentUser _currentUser;
     private readonly IGuidGenerator _guidGenerator;
 
-    private static readonly MethodInfo ConfigureBasePropertiesMethodInfo
+    private static readonly MethodInfo? ConfigureBasePropertiesMethodInfo
      = typeof(DddifyDbContext)
          .GetMethod(
              nameof(ConfigureBaseProperties),
@@ -63,8 +59,7 @@ public class DddifyDbContext : DbContext
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            ConfigureBasePropertiesMethodInfo
-                .MakeGenericMethod(entityType.ClrType)
+            ConfigureBasePropertiesMethodInfo?.MakeGenericMethod(entityType.ClrType)
                 .Invoke(this, new object[] { modelBuilder, entityType });
         }
 

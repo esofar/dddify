@@ -1,14 +1,13 @@
 ﻿using Dddify.Domain.Entities;
 using MyCompany.MyProject.Domain.Enums;
-using System;
 
 namespace MyCompany.MyProject.Domain.Entities;
 
 public class TodoItem : FullAuditedEntity<Guid>
 {
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
-    public string Note { get; set; }
+    public string Note { get; set; } = string.Empty;
 
     public PriorityLevel Priority { get; set; }
 

@@ -19,8 +19,8 @@ public static class ServiceCollectionExtensions
     /// <returns>An <see cref="IDddifyBuilder"/>that can be used to further configure the Dddify services.</returns>
     public static IDddifyBuilder AddDddify(this IServiceCollection services, Action<IDddifyBuilder> builderAction)
     {
-        Check.NotNull(services, nameof(services));
-        Check.NotNull(builderAction, nameof(builderAction));
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(builderAction);
 
         services.AddOptions<SequentialGuidGeneratorOptions>();
         services.AddOptions<ClockOptions>();

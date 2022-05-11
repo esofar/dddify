@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace Dddify.Security.Identity;
 
 public static class CurrentUserExtensions
 {
-    public static Claim FindClaim(this ICurrentUser currentUser, string claimType)
+    public static Claim? FindClaim(this ICurrentUser currentUser, string claimType)
     {
-        return currentUser.Principal?.Claims.FirstOrDefault(c => c.Type == claimType);
+        return currentUser?.Principal?.Claims.FirstOrDefault(c => c.Type == claimType);
     }
 
     public static Claim[] FindClaims(this ICurrentUser currentUser, string claimType)
@@ -26,7 +24,7 @@ public static class CurrentUserExtensions
         return currentUser.FindClaims(DefaultClaimTypes.Role).Any(c => c.Value == roleName);
     }
 
-    public static string FindClaimValue(this ICurrentUser currentUser, string claimType)
+    public static string? FindClaimValue(this ICurrentUser currentUser, string claimType)
     {
         return currentUser.FindClaim(claimType)?.Value;
     }

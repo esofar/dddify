@@ -8,7 +8,7 @@ namespace Dddify.Security.Identity;
 /// </summary>
 public interface ICurrentUser
 {
-    ClaimsPrincipal Principal { get; }
+    ClaimsPrincipal? Principal { get; }
 
     bool IsAuthenticated { get; }
 

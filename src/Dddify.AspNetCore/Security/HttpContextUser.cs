@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Dddify.DependencyInjection;
 using Dddify.Security.Identity;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +14,7 @@ public class HttpContextUser : ICurrentUser, ITransientDependency
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public ClaimsPrincipal Principal => _httpContextAccessor.HttpContext.User;
+    public ClaimsPrincipal? Principal => _httpContextAccessor.HttpContext?.User;
 
     public bool IsAuthenticated => Id.HasValue;
 

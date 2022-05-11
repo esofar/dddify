@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Dddify.Auditing;
+﻿namespace Dddify.Auditing;
 
 /// <summary>
 /// This interface can be implemented to store creation information (who and when created).

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Dddify;
 
 namespace System.Reflection;
 
@@ -9,8 +9,8 @@ public static class AssemblyExtensions
 {
     public static string GetFullNamePrefix(this Assembly assembly, string nameSectionSeparator)
     {
-        var fullname = assembly.FullName;
-        return fullname.Substring(0, fullname.IndexOf(nameSectionSeparator, StringComparison.Ordinal) + 1);
+        var fullname = assembly.FullName ?? string.Empty;
+        return fullname[..(fullname.IndexOf(nameSectionSeparator, StringComparison.Ordinal) + 1)];
     }
 
     public static IEnumerable<Assembly> LoadAssemblies(this IEnumerable<AssemblyName> assemblyNames)

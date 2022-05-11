@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -6,18 +6,18 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<VersionPrefix>1.0.0</VersionPrefix>
 		<Authors>esofar</Authors>
-		<Description>Dddify for AspNetCore.</Description>
+		<Description>Dddify for Infrastructure.</Description>
 		<PackageProjectUrl>https://dddify.net</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/esofar/dddify</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Dddify\Dddify.csproj" />
+		<ProjectReference Include="..\Dddify.Domain\Dddify.Domain\Dddify.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

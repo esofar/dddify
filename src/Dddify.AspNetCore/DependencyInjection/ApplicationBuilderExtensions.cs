@@ -2,7 +2,6 @@
 using Dddify.AspNetCore.Localization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
-using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +9,7 @@ public static class ApplicationBuilderExtensions
 {
     public static IApplicationBuilder UseDddify(this IApplicationBuilder app)
     {
-        Check.NotNull(app, nameof(app));
+        ArgumentNullException.ThrowIfNull(app);
 
         app.UseRequestLocalization();
 

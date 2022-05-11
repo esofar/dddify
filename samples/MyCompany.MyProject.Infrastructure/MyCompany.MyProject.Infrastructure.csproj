@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Dddify.EntityFrameworkCore\Dddify.EntityFrameworkCore.csproj" />
+		<ProjectReference Include="..\..\src\Dddify.Infrastructure\Dddify.Infrastructure.csproj" />
 		<ProjectReference Include="..\MyCompany.MyProject.Domain\MyCompany.MyProject.Domain.csproj" />
 	</ItemGroup>
 
