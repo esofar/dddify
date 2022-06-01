@@ -1,9 +1,6 @@
-﻿using Dddify.EntityFrameworkCore;
-using Dddify.Security.Identity;
-using Dddify.Timing;
+﻿using Dddify.Infrastructure.EFCore;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Domain.Entities;
-using MediatR;
 
 namespace MyCompany.MyProject.Infrastructure
 {
@@ -20,8 +17,8 @@ namespace MyCompany.MyProject.Infrastructure
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Todo> Todos { get; set; }
+        public DbSet<Todo> Todos => Set<Todo>();
 
-        public DbSet<TodoItem> TodoItems { get; set; }
+        public DbSet<TodoItem> TodoItems => Set<TodoItem>();
     }
 }

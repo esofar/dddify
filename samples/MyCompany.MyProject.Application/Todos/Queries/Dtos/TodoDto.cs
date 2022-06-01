@@ -1,8 +1,16 @@
 ﻿using Mapster;
-using MyCompany.MyProject.Application.Queries;
 using MyCompany.MyProject.Domain.Entities;
 
-namespace MyCompany.MyProject.Application.Mappers;
+namespace MyCompany.MyProject.Application.Todos.Queries;
+
+public class TodoDto
+{
+    public Guid Id { get; set; }
+
+    public string Title { get; set; }
+
+    public string ColourCode { get; set; }
+}
 
 public class TodoMapper : IRegister
 {

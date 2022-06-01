@@ -5,11 +5,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Infrastructure;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MyCompany.MyProject.Application.Queries;
+namespace MyCompany.MyProject.Application.Todos.Queries;
 
 public class GetTodoQuery : IRequest<TodoDto>
 {
@@ -29,11 +26,10 @@ public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, TodoDto>
 
     public async Task<TodoDto> Handle(GetTodoQuery request, CancellationToken cancellationToken)
     {
-        var todo = await _context.Todos
-            .AsNoTracking()
+        var todo = await _context.Todos.AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
-        if (todo == null)
+        if (todo is null)
         {
             throw new NotFoundException(nameof(Todo), request.Id);
         }

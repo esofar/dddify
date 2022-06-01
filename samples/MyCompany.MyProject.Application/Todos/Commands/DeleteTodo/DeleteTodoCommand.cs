@@ -1,13 +1,9 @@
-﻿using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MyCompany.MyProject.Domain.ValueObjects;
-using MyCompany.MyProject.Infrastructure;
-using Dddify.Exceptions;
+﻿using Dddify.Exceptions;
+using MediatR;
 using MyCompany.MyProject.Domain.Entities;
+using MyCompany.MyProject.Infrastructure;
 
-namespace MyCompany.MyProject.Application.Commands;
+namespace MyCompany.MyProject.Application.Todos.Commands;
 
 public class DeleteTodoCommand : IRequest
 {
@@ -34,7 +30,7 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand>
 
         _context.Todos.Remove(todo);
 
-        await _context.SaveEntitiesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

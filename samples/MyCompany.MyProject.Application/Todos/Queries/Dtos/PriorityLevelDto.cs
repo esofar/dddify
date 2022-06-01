@@ -1,4 +1,4 @@
-﻿namespace MyCompany.MyProject.Application.Queries;
+﻿namespace MyCompany.MyProject.Application.Todos.Queries;
 
 internal class PriorityLevelDto
 {

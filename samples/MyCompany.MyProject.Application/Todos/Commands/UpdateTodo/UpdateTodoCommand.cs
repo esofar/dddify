@@ -1,16 +1,12 @@
-﻿using MediatR;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Dddify.Exceptions;
+using Mapster;
+using MediatR;
+using MyCompany.MyProject.Application.Todos.Queries;
+using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Domain.ValueObjects;
 using MyCompany.MyProject.Infrastructure;
-using Dddify.Exceptions;
-using MyCompany.MyProject.Domain.Entities;
-using Mapster;
-using MyCompany.MyProject.Application.Queries;
 
-namespace MyCompany.MyProject.Application.Commands;
+namespace MyCompany.MyProject.Application.Todos.Commands;
 
 public class UpdateTodoCommand : IRequest<TodoDto>
 {
@@ -34,7 +30,7 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, TodoD
     {
         var todo = await _context.Todos.FindAsync(new object[] { request.Id }, cancellationToken);
 
-        if (todo == null)
+        if (todo is null)
         {
             throw new NotFoundException(nameof(Todo), request.Id);
         }
@@ -42,7 +38,7 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, TodoD
         todo.Title = request.Title;
         todo.Colour = request.Colour;
 
-        await _context.SaveEntitiesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return todo.Adapt<TodoDto>();
     }

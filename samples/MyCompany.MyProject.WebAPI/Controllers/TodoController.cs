@@ -1,8 +1,8 @@
 ﻿using Dddify.AspNetCore.ApiResult;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MyCompany.MyProject.Application.Commands;
-using MyCompany.MyProject.Application.Queries;
+using MyCompany.MyProject.Application.Todos.Commands;
+using MyCompany.MyProject.Application.Todos.Queries;
 using MyCompany.MyProject.Domain.ValueObjects;
 
 namespace MyCompany.MyProject.Web.Controllers;
@@ -22,7 +22,7 @@ public class TodoController : ControllerBase
     [HttpGet]
     public async Task<IPagedList<TodoDto>> GetPagedListAsync(int page, int size)
     {
-        return await _sender.Send(new GetTodoPagedListQuery { Page = page, Size = size }, HttpContext.RequestAborted);
+        return await _sender.Send(new GetPagedTodosQuery { Page = page, Size = size }, HttpContext.RequestAborted);
     }
 
     [ProducesResponseType(typeof(ApiResult<TodoDto>), StatusCodes.Status200OK)]

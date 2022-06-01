@@ -1,22 +1,18 @@
-﻿using Dddify.EntityFrameworkCore;
+﻿using Dddify.Infrastructure.EFCore;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Infrastructure;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MyCompany.MyProject.Application.Queries;
+namespace MyCompany.MyProject.Application.Todos.Queries;
 
-public class GetTodoPagedListQuery : IRequest<IPagedList<TodoDto>>
+public class GetPagedTodosQuery : IRequest<IPagedList<TodoDto>>
 {
     public int Page { get; set; }
     public int Size { get; set; }
 }
 
-public class GetTodoPagedListQueryHandler : IRequestHandler<GetTodoPagedListQuery, IPagedList<TodoDto>>
+public class GetTodoPagedListQueryHandler : IRequestHandler<GetPagedTodosQuery, IPagedList<TodoDto>>
 {
     private readonly ApplicationDbContext _context;
 
@@ -25,7 +21,7 @@ public class GetTodoPagedListQueryHandler : IRequestHandler<GetTodoPagedListQuer
         _context = context;
     }
 
-    public async Task<IPagedList<TodoDto>> Handle(GetTodoPagedListQuery request, CancellationToken cancellationToken)
+    public async Task<IPagedList<TodoDto>> Handle(GetPagedTodosQuery request, CancellationToken cancellationToken)
     {
         return await _context.Todos
             .AsNoTracking()

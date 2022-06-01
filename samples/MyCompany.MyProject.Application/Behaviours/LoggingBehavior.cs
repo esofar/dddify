@@ -1,8 +1,6 @@
-﻿using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Dddify.DependencyInjection;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using Dddify.DependencyInjection;
 
 namespace MyCompany.MyProject.Application.Behaviours;
 

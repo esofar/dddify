@@ -4,7 +4,7 @@ using Dddify.Security.Identity;
 using Dddify.Timing;
 using MediatR;
 
-namespace Dddify.EntityFrameworkCore;
+namespace Dddify.Infrastructure.EFCore;
 
 public class DbContextDependencies : IDbContextDependencies, ITransientDependency
 {

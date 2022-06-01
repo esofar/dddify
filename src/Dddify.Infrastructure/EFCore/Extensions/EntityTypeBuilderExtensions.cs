@@ -1,9 +1,8 @@
 ﻿using Dddify.Auditing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
-namespace Dddify.EntityFrameworkCore.Extensions;
+namespace Dddify.Infrastructure.EFCore.Extensions;
 
 public static class EntityTypeBuilderExtensions
 {
@@ -21,9 +20,7 @@ public static class EntityTypeBuilderExtensions
         {
             var fieldName = nameof(ISoftDeletable.IsDeleted);
 
-            builder.Property(fieldName)
-                .IsRequired();
-
+            builder.Property(fieldName).IsRequired();
             builder.HasQueryFilter(e => !EF.Property<bool>(e, fieldName));
         }
     }
@@ -35,9 +32,7 @@ public static class EntityTypeBuilderExtensions
         {
             var fieldName = nameof(IHasConcurrencyStamp.ConcurrencyStamp);
 
-            builder.Property(fieldName)
-                .IsConcurrencyToken()
-                .HasMaxLength(50);
+            builder.Property(fieldName).IsConcurrencyToken().HasMaxLength(50);
         }
     }
 }

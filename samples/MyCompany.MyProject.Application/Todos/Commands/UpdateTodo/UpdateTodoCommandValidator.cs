@@ -1,14 +1,10 @@
 ﻿using Dddify.Localization;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using MyCompany.MyProject.Application.Commands;
 using MyCompany.MyProject.Domain.ValueObjects;
 using MyCompany.MyProject.Infrastructure;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MyCompany.MyProject.Application.Validators;
+namespace MyCompany.MyProject.Application.Todos.Commands;
 
 public class UpdateTodoCommandValidator : AbstractValidator<UpdateTodoCommand>
 {

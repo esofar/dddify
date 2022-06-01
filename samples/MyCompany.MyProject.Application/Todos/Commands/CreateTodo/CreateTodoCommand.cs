@@ -1,15 +1,13 @@
 ﻿using Dddify.Timing;
 using Mapster;
 using MediatR;
-using MyCompany.MyProject.Application.Queries;
+using MyCompany.MyProject.Application.Todos.Queries;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Domain.Enums;
 using MyCompany.MyProject.Domain.ValueObjects;
 using MyCompany.MyProject.Infrastructure;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MyCompany.MyProject.Application.Commands;
+namespace MyCompany.MyProject.Application.Todos.Commands;
 
 public class CreateTodoCommand : IRequest<TodoDto>
 {
@@ -42,7 +40,7 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, TodoD
         });
 
         await _context.Todos.AddAsync(todo, cancellationToken);
-        await _context.SaveEntitiesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return todo.Adapt<TodoDto>();
     }

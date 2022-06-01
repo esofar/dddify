@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Dddify.EntityFrameworkCore;
+namespace Dddify.Infrastructure.EFCore;
 
 /// <summary>
 /// Entity Framework LINQ related extension methods.
