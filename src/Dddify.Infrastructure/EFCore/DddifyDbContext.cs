@@ -1,4 +1,6 @@
-﻿using Dddify.Infrastructure.EFCore.Extensions;
+﻿using Dddify.Auditing;
+using Dddify.Domain.Entities;
+using Dddify.Infrastructure.EFCore.Extensions;
 using Dddify.Infrastructure.EntityFrameworkCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -49,5 +51,11 @@ public class DddifyDbContext : DbContext
         {
             modelBuilder.Entity<TEntity>().ConfigureByConvention();
         }
+    }
+
+    public void ResetConcurrencyStamp<TEntity>(TEntity entity, string concurrencyStamp)
+        where TEntity : IEntity
+    {
+        Entry(entity).Property(nameof(IHasConcurrencyStamp.ConcurrencyStamp)).OriginalValue = concurrencyStamp;
     }
 }

@@ -2,6 +2,9 @@
 using MediatR;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Infrastructure;
+using Dddify.Domain.Events;
+using MyCompany.MyProject.Domain.DomainEvents;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyCompany.MyProject.Application.Todos.Commands;
 
@@ -21,7 +24,7 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand>
 
     public async Task<Unit> Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
     {
-        var todo = await _context.Todos.FindAsync(new object[] { request.Id }, cancellationToken);
+        var todo = await _context.Todos.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (todo is null)
         {
@@ -29,6 +32,8 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand>
         }
 
         _context.Todos.Remove(todo);
+
+        todo.AddDomainEvent(new TodoDeletedDomainEvent(todo));
 
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -26,7 +26,8 @@ public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, TodoDto>
 
     public async Task<TodoDto> Handle(GetTodoQuery request, CancellationToken cancellationToken)
     {
-        var todo = await _context.Todos.AsNoTracking()
+        var todo = await _context.Todos
+            .AsNoTracking()
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (todo is null)

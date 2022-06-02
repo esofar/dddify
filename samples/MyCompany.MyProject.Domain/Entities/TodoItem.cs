@@ -5,9 +5,9 @@ namespace MyCompany.MyProject.Domain.Entities;
 
 public class TodoItem : FullAuditedEntity<Guid>
 {
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; } = default!;
 
-    public string Note { get; set; } = string.Empty;
+    public string Note { get; set; } = default!;
 
     public PriorityLevel Priority { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using Dddify.Exceptions;
 using Mapster;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Application.Todos.Queries;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Domain.ValueObjects;
@@ -12,9 +13,11 @@ public class UpdateTodoCommand : IRequest<TodoDto>
 {
     public Guid Id { get; set; }
 
-    public string Title { get; set; }
+    public string Title { get; set; } = default!;
 
-    public Colour Colour { get; set; }
+    public Colour Colour { get; set; } = default!;
+
+    public string ConcurrencyStamp { get; set; } = default!;
 }
 
 public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, TodoDto>
@@ -28,12 +31,14 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, TodoD
 
     public async Task<TodoDto> Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
     {
-        var todo = await _context.Todos.FindAsync(new object[] { request.Id }, cancellationToken);
+        var todo = await _context.Todos.FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
 
         if (todo is null)
         {
             throw new NotFoundException(nameof(Todo), request.Id);
         }
+
+        _context.ResetConcurrencyStamp(todo, request.ConcurrencyStamp);
 
         todo.Title = request.Title;
         todo.Colour = request.Colour;

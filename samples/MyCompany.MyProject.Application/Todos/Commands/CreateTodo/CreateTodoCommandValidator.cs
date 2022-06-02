@@ -19,7 +19,7 @@ public class CreateTodoCommandValidator : AbstractValidator<CreateTodoCommand>
         RuleFor(v => v.Title)
             .NotEmpty().WithMessage(_localizer["The title is required."])
             .MaximumLength(200).WithMessage(_localizer["The title must not exceed 200 characters."])
-            .MustAsync(BeUniqueTitle).WithMessage(c => _localizer["The specified title already exists.", c.Title]);
+            .MustAsync(BeUniqueTitle).WithMessage(_localizer["The specified title already exists."]);
 
         RuleFor(v => v.Colour)
            .NotEmpty().WithMessage(_localizer["The colour is required."])

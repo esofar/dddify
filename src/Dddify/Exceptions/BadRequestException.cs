@@ -8,7 +8,6 @@ public class BadRequestException : Exception
     public BadRequestException()
         : base("One or more validation failures have occurred.")
     {
-        Errors = new Dictionary<string, string[]>();
     }
 
     public BadRequestException(Dictionary<string, string[]> errors)
@@ -22,5 +21,6 @@ public class BadRequestException : Exception
     {
     }
 
-    public IDictionary<string, string[]>? Errors { get; }
+    public IDictionary<string, string[]> Errors { get; } = new Dictionary<string, string[]>();
+
 }

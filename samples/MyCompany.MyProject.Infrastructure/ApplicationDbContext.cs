@@ -17,8 +17,8 @@ namespace MyCompany.MyProject.Infrastructure
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Todo> Todos => Set<Todo>();
+        public DbSet<Todo> Todos { get; set; } = default!;
 
-        public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+        public DbSet<TodoItem> TodoItems { get; set; } = default!;
     }
 }

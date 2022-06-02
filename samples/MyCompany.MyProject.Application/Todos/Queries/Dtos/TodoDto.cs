@@ -3,13 +3,15 @@ using MyCompany.MyProject.Domain.Entities;
 
 namespace MyCompany.MyProject.Application.Todos.Queries;
 
-public class TodoDto
+public record TodoDto
 {
     public Guid Id { get; set; }
 
-    public string Title { get; set; }
+    public string Title { get; set; } = default!;
 
-    public string ColourCode { get; set; }
+    public string ColourCode { get; set; } = default!;
+
+    public string ConcurrencyStamp { get; set; } = default!;
 }
 
 public class TodoMapper : IRegister
@@ -17,6 +19,6 @@ public class TodoMapper : IRegister
     public void Register(TypeAdapterConfig config)
     {
         config.ForType<Todo, TodoDto>()
-            .Map(dest => dest.Title, src => src.Title + "_AppendSomething!");
+            .Map(dest => dest.Title, src => $"✔ {src.Title}");
     }
 }

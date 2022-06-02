@@ -2,8 +2,6 @@
 using Dddify.Domain.Entities;
 using MyCompany.MyProject.Domain.DomainEvents;
 using MyCompany.MyProject.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
 
 namespace MyCompany.MyProject.Domain.Entities;
 
@@ -19,15 +17,15 @@ public class Todo : FullAuditedAggregateRoot<Guid>, ISoftDeletable, IHasConcurre
 
     public Todo() { }
 
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; set; } = default!;
 
-    public Colour Colour { get; set; } = Colour.Blue;
+    public Colour Colour { get; set; } = default!;
 
-    public IList<TodoItem> Items { get; private set; } = new List<TodoItem>();
+    public IList<TodoItem> Items { get; private set; } = default!;
 
     public bool IsDeleted { get; set; }
 
-    public string ConcurrencyStamp { get; set; } = string.Empty;
+    public string ConcurrencyStamp { get; set; } = default!;
 
     public void AddItem(TodoItem item)
     {
