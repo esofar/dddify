@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyCompany.MyProject.WebAPI"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dddify.Infrastructure", "src\Dddify.Infrastructure\Dddify.Infrastructure.csproj", "{1AF653EC-8C00-4615-A7C6-369C7BF5F9AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dddify.Domain", "src\Dddify.Domain\Dddify.Domain\Dddify.Domain.csproj", "{AA629BC8-376F-4CF9-BB72-02FB4B75A6FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dddify.Domain", "src\Dddify.Domain\Dddify.Domain.csproj", "{AA629BC8-376F-4CF9-BB72-02FB4B75A6FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

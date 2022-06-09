@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Dddify.Domain\Dddify.Domain\Dddify.Domain.csproj" />
+	  <ProjectReference Include="..\Dddify.Domain\Dddify.Domain.csproj" />
 	</ItemGroup>
 
 </Project>
