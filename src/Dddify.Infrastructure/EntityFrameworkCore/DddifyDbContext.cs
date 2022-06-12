@@ -1,12 +1,12 @@
 ﻿using Dddify.Auditing;
 using Dddify.Domain.Entities;
-using Dddify.Infrastructure.EFCore.Extensions;
+using Dddify.Infrastructure.EntityFrameworkCore.Extensions;
 using Dddify.Infrastructure.EntityFrameworkCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
-namespace Dddify.Infrastructure.EFCore;
+namespace Dddify.Infrastructure.EntityFrameworkCore;
 
 public class DddifyDbContext : DbContext
 {

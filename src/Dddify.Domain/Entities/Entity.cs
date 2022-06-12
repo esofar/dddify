@@ -11,12 +11,12 @@ public abstract class Entity : IEntity
 
     public override string ToString()
     {
-        return $"[Entity: {GetType().Name}] Keys = { string.Join(", ", GetKeys()) }";
+        return $"[Entity: {GetType().Name}] Keys = {string.Join(", ", GetKeys())}";
     }
 
-    private List<IDomainEvent> _domainEvents;
+    private List<IDomainEvent>? _domainEvents;
 
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent>? DomainEvents => _domainEvents?.AsReadOnly();
 
     public void AddDomainEvent(IDomainEvent @event)
     {

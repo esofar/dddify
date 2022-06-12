@@ -3,7 +3,7 @@ using Dddify.Security.Identity;
 using Dddify.Timing;
 using MediatR;
 
-namespace Dddify.Infrastructure.EFCore;
+namespace Dddify.Infrastructure.EntityFrameworkCore;
 
 public interface IDbContextDependencies
 {

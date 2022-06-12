@@ -6,7 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<VersionPrefix>1.0.0</VersionPrefix>
 		<Authors>esofar</Authors>
-		<Description>Dddify for Domain.</Description>
 		<PackageProjectUrl>https://dddify.net</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/esofar/dddify</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

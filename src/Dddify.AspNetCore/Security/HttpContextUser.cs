@@ -20,15 +20,15 @@ public class HttpContextUser : ICurrentUser, ITransientDependency
 
     public Guid? Id => this.FindClaimValue(DefaultClaimTypes.UserId)?.To<Guid>();
 
-    public string UserName => this.FindClaimValue(DefaultClaimTypes.UserName);
+    public string? UserName => this.FindClaimValue(DefaultClaimTypes.UserName);
 
-    public string Name => this.FindClaimValue(DefaultClaimTypes.Name);
+    public string? Name => this.FindClaimValue(DefaultClaimTypes.Name);
 
-    public string Email => this.FindClaimValue(DefaultClaimTypes.Email);
+    public string? Email => this.FindClaimValue(DefaultClaimTypes.Email);
 
     public bool EmailVerified => this.FindClaimValue<bool>(DefaultClaimTypes.EmailVerified);
 
-    public string PhoneNumber => this.FindClaimValue(DefaultClaimTypes.PhoneNumber);
+    public string? PhoneNumber => this.FindClaimValue(DefaultClaimTypes.PhoneNumber);
 
     public bool PhoneNumberVerified => this.FindClaimValue<bool>(DefaultClaimTypes.PhoneNumberVerified);
 }

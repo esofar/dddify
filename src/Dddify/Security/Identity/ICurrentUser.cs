@@ -20,17 +20,17 @@ public interface ICurrentUser
     /// <summary>
     /// User name of the current user. Returns `null`, if the current user has not logged in.
     /// </summary>
-    string UserName { get; }
+    string? UserName { get; }
 
     /// <summary>
     /// Name of the current user. Returns `null`, if the current user has not logged in.
     /// </summary>
-    string Name { get; }
+    string? Name { get; }
 
     /// <summary>
     /// Email address of the current user.Returns `null`, if the current user has not logged in or not set an email address.
     /// </summary>
-    string Email { get; }
+    string? Email { get; }
 
     /// <summary>
     /// Returns `true`, if the email address of the current user has been verified.
@@ -40,7 +40,7 @@ public interface ICurrentUser
     /// <summary>
     /// Phone number of the current user. Returns `null`, if the current user has not logged in or not set a phone number.
     /// </summary>
-    string PhoneNumber { get; }
+    string? PhoneNumber { get; }
 
     /// <summary>
     /// Returns `true`, if the phone number of the current user has been verified.

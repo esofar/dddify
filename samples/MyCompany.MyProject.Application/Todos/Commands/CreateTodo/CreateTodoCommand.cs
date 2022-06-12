@@ -1,6 +1,4 @@
-﻿using Mapster;
-using MediatR;
-using MyCompany.MyProject.Application.Todos.Queries;
+﻿using MyCompany.MyProject.Application.Todos.Queries;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Domain.ValueObjects;
 using MyCompany.MyProject.Infrastructure;

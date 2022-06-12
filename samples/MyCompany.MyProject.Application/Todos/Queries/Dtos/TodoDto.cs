@@ -1,5 +1,4 @@
-﻿using Mapster;
-using MyCompany.MyProject.Domain.Entities;
+﻿using MyCompany.MyProject.Domain.Entities;
 
 namespace MyCompany.MyProject.Application.Todos.Queries;
 

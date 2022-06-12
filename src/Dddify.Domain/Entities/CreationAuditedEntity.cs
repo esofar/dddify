@@ -1,5 +1,4 @@
 ﻿using Dddify.Auditing;
-using System;
 
 namespace Dddify.Domain.Entities;
 

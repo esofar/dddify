@@ -1,7 +1,5 @@
 ﻿using Dddify.Exceptions;
-using Mapster;
 using MapsterMapper;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Infrastructure;

@@ -1,4 +1,4 @@
-﻿using Dddify.Infrastructure.EFCore;
+﻿using Dddify.Infrastructure.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Domain.Entities;
 

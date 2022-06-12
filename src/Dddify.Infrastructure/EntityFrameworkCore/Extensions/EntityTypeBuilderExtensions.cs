@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Dddify.Infrastructure.EFCore.Extensions;
+namespace Dddify.Infrastructure.EntityFrameworkCore.Extensions;
 
 public static class EntityTypeBuilderExtensions
 {

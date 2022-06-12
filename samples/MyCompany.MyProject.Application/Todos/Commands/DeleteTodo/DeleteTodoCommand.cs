@@ -1,10 +1,8 @@
 ﻿using Dddify.Exceptions;
-using MediatR;
+using Microsoft.EntityFrameworkCore;
+using MyCompany.MyProject.Domain.DomainEvents;
 using MyCompany.MyProject.Domain.Entities;
 using MyCompany.MyProject.Infrastructure;
-using Dddify.Domain.Events;
-using MyCompany.MyProject.Domain.DomainEvents;
-using Microsoft.EntityFrameworkCore;
 
 namespace MyCompany.MyProject.Application.Todos.Commands;
 

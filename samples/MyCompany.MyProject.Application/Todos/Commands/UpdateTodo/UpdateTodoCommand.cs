@@ -1,6 +1,4 @@
 ﻿using Dddify.Exceptions;
-using Mapster;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Application.Todos.Queries;
 using MyCompany.MyProject.Domain.Entities;

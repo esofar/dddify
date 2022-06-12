@@ -26,11 +26,11 @@ public static class DddifyBuilderExtensions
     public static IDddifyBuilder AddApplication(this IDddifyBuilder builder)
     {
         var entryAssembly = Assembly.GetEntryAssembly();
-        var applicationAssemblies = new List<Assembly> { entryAssembly };
+        var applicationAssemblies = new List<Assembly> { entryAssembly! };
 
-        var applicationAssemblyNames = entryAssembly
+        var applicationAssemblyNames = entryAssembly!
             .GetReferencedAssemblies()
-            .Where(c => c.Name.StartsWith(entryAssembly.GetFullNamePrefix(".")) && c.Name.EndsWith("Application"))
+            .Where(c => c.Name!.StartsWith(entryAssembly.GetFullNamePrefix(".")) && c.Name.EndsWith("Application"))
             .ToList();
 
         applicationAssemblies

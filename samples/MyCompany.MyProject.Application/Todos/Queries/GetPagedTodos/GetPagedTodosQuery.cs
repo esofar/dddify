@@ -1,6 +1,4 @@
-﻿using Dddify.Infrastructure.EFCore;
-using Mapster;
-using MediatR;
+﻿using Dddify.Infrastructure.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Infrastructure;
 

@@ -2,7 +2,6 @@
 using Dddify.Domain.Entities;
 using Dddify.Domain.Events;
 using Dddify.Guids;
-using Dddify.Infrastructure.EFCore;
 using Dddify.Security.Identity;
 using Dddify.Timing;
 using MediatR;
@@ -83,7 +82,7 @@ namespace Dddify.Infrastructure.EntityFrameworkCore.Interceptors
             return context.ChangeTracker
                .Entries<Entity>()
                .Where(c => c.Entity.DomainEvents != null && c.Entity.DomainEvents.Any())
-               .SelectMany(x => x.Entity.DomainEvents)
+               .SelectMany(x => x.Entity.DomainEvents!)
                .ToList();
         }
 

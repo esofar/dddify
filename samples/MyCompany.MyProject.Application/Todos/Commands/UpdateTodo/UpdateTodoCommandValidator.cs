@@ -1,5 +1,4 @@
 ﻿using Dddify.Localization;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MyCompany.MyProject.Domain.ValueObjects;
 using MyCompany.MyProject.Infrastructure;
