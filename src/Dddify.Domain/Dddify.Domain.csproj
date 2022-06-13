@@ -12,6 +12,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Dddify.Domain\**" />
+	  <EmbeddedResource Remove="Dddify.Domain\**" />
+	  <None Remove="Dddify.Domain\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Dddify\Dddify.csproj" />
 	</ItemGroup>
 

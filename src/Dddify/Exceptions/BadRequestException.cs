@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Dddify.Exceptions;
+﻿namespace Dddify.Exceptions;
 
 public class BadRequestException : Exception
 {

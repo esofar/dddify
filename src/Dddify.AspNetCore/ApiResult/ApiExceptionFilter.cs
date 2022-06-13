@@ -1,4 +1,5 @@
 ﻿using Dddify.Exceptions;
+using Dddify.Localization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -20,6 +21,7 @@ public class ApiExceptionFilter : IExceptionFilter
         // Register known exception types and handlers.
         _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
         {
+            { typeof(BussinessException), HandleBussinessException },
             { typeof(BadRequestException), HandleBadRequestException },
             { typeof(NotFoundException), HandleNotFoundException },
             { typeof(UnauthorizedException), HandleUnauthorizedException },
@@ -45,10 +47,18 @@ public class ApiExceptionFilter : IExceptionFilter
         context.ExceptionHandled = true;
     }
 
+    private void HandleBussinessException(ExceptionContext context)
+    {
+        var exception = context.Exception as BussinessException;
+        var apiResult = _apiResultWrapper.Failed(exception!.Message);
+
+        context.Result = new ObjectResult(apiResult);
+    }
+
     private void HandleBadRequestException(ExceptionContext context)
     {
         var exception = context.Exception as BadRequestException;
-        var apiResult = _apiResultWrapper.Failed(exception.Errors);
+        var apiResult = _apiResultWrapper.Failed(exception!.Errors);
 
         context.Result = new BadRequestObjectResult(apiResult);
     }
@@ -56,7 +66,7 @@ public class ApiExceptionFilter : IExceptionFilter
     private void HandleNotFoundException(ExceptionContext context)
     {
         var exception = context.Exception as NotFoundException;
-        var apiResult = _apiResultWrapper.Failed(exception.Message);
+        var apiResult = _apiResultWrapper.Failed(exception!.Message);
 
         context.Result = new NotFoundObjectResult(apiResult);
     }
@@ -64,7 +74,7 @@ public class ApiExceptionFilter : IExceptionFilter
     private void HandleUnauthorizedException(ExceptionContext context)
     {
         var exception = context.Exception as UnauthorizedException;
-        var apiResult = _apiResultWrapper.Failed(exception.Message);
+        var apiResult = _apiResultWrapper.Failed(exception!.Message);
 
         context.Result = new ObjectResult(apiResult)
         {
@@ -75,7 +85,7 @@ public class ApiExceptionFilter : IExceptionFilter
     private void HandleForbiddenException(ExceptionContext context)
     {
         var exception = context.Exception as ForbiddenException;
-        var apiResult = _apiResultWrapper.Failed(exception.Message);
+        var apiResult = _apiResultWrapper.Failed(exception!.Message);
 
         context.Result = new ObjectResult(apiResult)
         {

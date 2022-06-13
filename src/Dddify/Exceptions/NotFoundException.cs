@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Dddify.Exceptions;
+﻿namespace Dddify.Exceptions;
 
 public class NotFoundException : Exception
 {
