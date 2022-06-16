@@ -21,7 +21,7 @@ public static class CurrentUserExtensions
 
     public static bool IsInRole(this ICurrentUser currentUser, string roleName)
     {
-        return currentUser.FindClaims(DefaultClaimTypes.Role).Any(c => c.Value == roleName);
+        return currentUser.FindClaims(CurrentUserClaimTypes.Role).Any(c => c.Value == roleName);
     }
 
     public static string? FindClaimValue(this ICurrentUser currentUser, string claimType)

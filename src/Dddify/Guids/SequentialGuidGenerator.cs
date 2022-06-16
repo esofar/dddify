@@ -5,10 +5,10 @@ using System.Security.Cryptography;
 
 namespace Dddify.Guids;
 
-/* This code is taken from jhtodd/SequentialGuid https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Classes/SequentialGuid.cs */
 
 /// <summary>
 /// Implements <see cref="IGuidGenerator"/> by creating sequential Guids.
+/// This code is taken from jhtodd/SequentialGuid https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Classes/SequentialGuid.cs */
 /// </summary>
 public class SequentialGuidGenerator : IGuidGenerator, ITransientDependency
 {

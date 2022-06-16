@@ -29,7 +29,7 @@ public static class DddifyBuilderExtensions
         return builder;
     }
 
-    public static IDddifyBuilder AddLocalization(this IDddifyBuilder builder, Action<AppLocalizationOptions> setupAction = null)
+    public static IDddifyBuilder AddLocalization(this IDddifyBuilder builder, Action<AppLocalizationOptions> setupAction)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(setupAction);

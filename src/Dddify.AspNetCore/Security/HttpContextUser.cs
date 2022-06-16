@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Dddify.DependencyInjection;
+﻿using Dddify.DependencyInjection;
 using Dddify.Security.Identity;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Dddify.AspNetCore.Security;
 
@@ -18,17 +18,17 @@ public class HttpContextUser : ICurrentUser, ITransientDependency
 
     public bool IsAuthenticated => Id.HasValue;
 
-    public Guid? Id => this.FindClaimValue(DefaultClaimTypes.UserId)?.To<Guid>();
+    public Guid? Id => this.FindClaimValue(CurrentUserClaimTypes.UserId)?.To<Guid>();
 
-    public string? UserName => this.FindClaimValue(DefaultClaimTypes.UserName);
+    public string? UserName => this.FindClaimValue(CurrentUserClaimTypes.UserName);
 
-    public string? Name => this.FindClaimValue(DefaultClaimTypes.Name);
+    public string? Name => this.FindClaimValue(CurrentUserClaimTypes.Name);
 
-    public string? Email => this.FindClaimValue(DefaultClaimTypes.Email);
+    public string? Email => this.FindClaimValue(CurrentUserClaimTypes.Email);
 
-    public bool EmailVerified => this.FindClaimValue<bool>(DefaultClaimTypes.EmailVerified);
+    public bool EmailVerified => this.FindClaimValue<bool>(CurrentUserClaimTypes.EmailVerified);
 
-    public string? PhoneNumber => this.FindClaimValue(DefaultClaimTypes.PhoneNumber);
+    public string? PhoneNumber => this.FindClaimValue(CurrentUserClaimTypes.PhoneNumber);
 
-    public bool PhoneNumberVerified => this.FindClaimValue<bool>(DefaultClaimTypes.PhoneNumberVerified);
+    public bool PhoneNumberVerified => this.FindClaimValue<bool>(CurrentUserClaimTypes.PhoneNumberVerified);
 }

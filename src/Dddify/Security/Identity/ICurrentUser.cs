@@ -13,37 +13,37 @@ public interface ICurrentUser
     bool IsAuthenticated { get; }
 
     /// <summary>
-    /// Id of the current user. Returns `null`, if the current user has not logged in.
+    /// Id of the current user. Returns null if the current user has not logged in.
     /// </summary>
     Guid? Id { get; }
 
     /// <summary>
-    /// User name of the current user. Returns `null`, if the current user has not logged in.
+    /// User name of the current user. Returns null if the current user has not logged in.
     /// </summary>
     string? UserName { get; }
 
     /// <summary>
-    /// Name of the current user. Returns `null`, if the current user has not logged in.
+    /// Name of the current user. Returns null if the current user has not logged in.
     /// </summary>
     string? Name { get; }
 
     /// <summary>
-    /// Email address of the current user.Returns `null`, if the current user has not logged in or not set an email address.
+    /// Email address of the current user.Returns null if the current user has not logged in or not set an email address.
     /// </summary>
     string? Email { get; }
 
     /// <summary>
-    /// Returns `true`, if the email address of the current user has been verified.
+    /// Returns true if the email address of the current user has been verified.
     /// </summary>
     bool EmailVerified { get; }
 
     /// <summary>
-    /// Phone number of the current user. Returns `null`, if the current user has not logged in or not set a phone number.
+    /// Phone number of the current user. Returns null if the current user has not logged in or not set a phone number.
     /// </summary>
     string? PhoneNumber { get; }
 
     /// <summary>
-    /// Returns `true`, if the phone number of the current user has been verified.
+    /// Returns true if the phone number of the current user has been verified.
     /// </summary>
     bool PhoneNumberVerified { get; }
 }

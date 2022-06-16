@@ -1,36 +1,34 @@
-﻿using System.Security.Claims;
-
-namespace Dddify.Security.Identity;
+﻿namespace Dddify.Security.Identity;
 
 /// <summary>
-/// Used to get dddify specified claim type names.
+/// Used to get <see cref="ICurrentUser"/> claim type names.
 /// </summary>
-public static class DefaultClaimTypes
+public static class CurrentUserClaimTypes
 {
     /// <summary>
-    /// Default: <see cref="ClaimTypes.Name"/>
+    /// Default: "name".
     /// </summary>
-    public static string UserName { get; set; } = ClaimTypes.Name;
+    public static string Name { get; set; } = "name";
 
     /// <summary>
-    /// Default: <see cref="ClaimTypes.GivenName"/>
+    /// Default: "user_id".
     /// </summary>
-    public static string Name { get; set; } = ClaimTypes.GivenName;
+    public static string UserId { get; set; } = "user_id";
 
     /// <summary>
-    /// Default: <see cref="ClaimTypes.NameIdentifier"/>
+    /// Default: "user_name".
     /// </summary>
-    public static string UserId { get; set; } = ClaimTypes.NameIdentifier;
+    public static string UserName { get; set; } = "user_name";
 
     /// <summary>
-    /// Default: <see cref="ClaimTypes.Role"/>
+    /// Default: "role".
     /// </summary>
-    public static string Role { get; set; } = ClaimTypes.Role;
+    public static string Role { get; set; } = "role";
 
     /// <summary>
-    /// Default: <see cref="ClaimTypes.Email"/>
+    /// Default: "email".
     /// </summary>
-    public static string Email { get; set; } = ClaimTypes.Email;
+    public static string Email { get; set; } = "email";
 
     /// <summary>
     /// Default: "email_verified".
