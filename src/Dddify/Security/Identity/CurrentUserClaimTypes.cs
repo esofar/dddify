@@ -48,5 +48,5 @@ public static class CurrentUserClaimTypes
     /// <summary>
     /// Default: "tenantid".
     /// </summary>
-    public static string TenantId { get; set; } = "tenantid";
+    public static string TenantId { get; set; } = "tenant_id";
 }
