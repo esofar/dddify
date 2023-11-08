@@ -1,7 +1,6 @@
 Dddify
 =======
 
-[![NuGet](https://img.shields.io/nuget/esofar/dddify.svg)](https://www.nuget.org/packages/dddify) 
 [![NuGet](https://img.shields.io/nuget/vpre/dddify.svg)](https://www.nuget.org/packages/dddify)
 
 A lightweight framework that practices Domain-Driven Design approach for building modern applications on ASP.NET Core.

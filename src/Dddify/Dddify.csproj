@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<PackageId>dddify</PackageId>
+		<PackageId>Dddify</PackageId>
 		<Title>Dddify</Title>
 		<Version>1.0.0-alpha</Version>
 		<Authors>Esofar</Authors>
