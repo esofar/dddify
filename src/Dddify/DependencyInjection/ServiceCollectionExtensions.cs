@@ -4,7 +4,6 @@ using Dddify.Domain;
 using Dddify.EntityFrameworkCore;
 using Dddify.Guids;
 using Dddify.Identity;
-using Dddify.Messaging.Behaviours;
 using Dddify.Timing;
 using FluentValidation;
 using Mapster;
