@@ -1,0 +1,13 @@
+global using Dddify.Domain;
+global using Dddify.Messaging.Commands;
+global using FluentValidation;
+global using Mapster;
+global using MapsterMapper;
+global using Microsoft.EntityFrameworkCore;
+global using Todolist.Application.Dtos;
+global using Todolist.Domain.Entities;
+global using Todolist.Domain.Events;
+global using Todolist.Domain.Exceptions;
+global using Todolist.Domain.Repositories;
+global using Dddify.Messaging.Queries;
+global using Dddify.EntityFrameworkCore;
