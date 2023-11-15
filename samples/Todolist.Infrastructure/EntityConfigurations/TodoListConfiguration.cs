@@ -1,11 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System.Drawing;
-using System.Net;
-using System.Reflection.Emit;
-using System.Text.Json;
-using Todolist.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Todolist.Infrastructure.EntityConfigurations;
 
@@ -28,10 +21,9 @@ public class TodoListConfiguration : IEntityTypeConfiguration<TodoList>
 
         builder.HasMany(c => c.Items)
             .WithOne(c => c.TodoList)
-            .HasForeignKey(c => c.TodoListId);
-
-        var navigation = builder.Metadata.FindNavigation(nameof(TodoList.Items));
-        navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasForeignKey(c => c.TodoListId)
+            .Metadata.DependentToPrincipal!.SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.HasData(
            new

@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Todolist.Domain.Entities;
-
-namespace Todolist.Infrastructure.EntityConfigurations;
+﻿namespace Todolist.Infrastructure.EntityConfigurations;
 
 public class TodoListItemConfiguration : IEntityTypeConfiguration<TodoListItem>
 {
@@ -15,6 +11,10 @@ public class TodoListItemConfiguration : IEntityTypeConfiguration<TodoListItem>
         builder.Property(c => c.Note)
             .HasMaxLength(200)
             .IsRequired();
+
+        builder.Property(c => c.IsDone)
+           .HasDefaultValue(false)
+           .IsRequired();
 
         builder.Property(c => c.Priority)
             .HasMaxLength(20)

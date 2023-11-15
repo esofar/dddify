@@ -1,5 +1,7 @@
 global using Dddify.Domain;
+global using Dddify.EntityFrameworkCore;
 global using Dddify.Messaging.Commands;
+global using Dddify.Messaging.Queries;
 global using FluentValidation;
 global using Mapster;
 global using MapsterMapper;
@@ -9,5 +11,3 @@ global using Todolist.Domain.Entities;
 global using Todolist.Domain.Events;
 global using Todolist.Domain.Exceptions;
 global using Todolist.Domain.Repositories;
-global using Dddify.Messaging.Queries;
-global using Dddify.EntityFrameworkCore;

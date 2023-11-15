@@ -17,6 +17,8 @@ public class TodoListItem : FullAuditedEntity<Guid>, ISoftDeletable
 
     public TodoListItemPriority Priority { get; private set; }
 
+    public bool IsDone { get; private set; }
+
     public int Order { get; private set; }
 
     public TodoList TodoList { get; private set; }
@@ -29,6 +31,11 @@ public class TodoListItem : FullAuditedEntity<Guid>, ISoftDeletable
     {
         Note = note;
         Priority = priority;
+    }
+
+    public void MarkComplete()
+    {
+        IsDone = true;
     }
 
     public void Sort(int order)

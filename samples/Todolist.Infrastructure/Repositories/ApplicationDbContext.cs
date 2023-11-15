@@ -1,9 +1,4 @@
-﻿using Dddify.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Todolist.Domain.Entities;
-using Todolist.Domain.Repositories;
-
-namespace Todolist.Infrastructure.Repositories;
+﻿namespace Todolist.Infrastructure.Repositories;
 
 public class ApplicationDbContext : AppDbContext, IApplicationDbContext
 {

@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<InvariantGlobalization>true</InvariantGlobalization>
-		<UserSecretsId>abe1f97a-08c7-43a0-b0af-23260a5157d3</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -18,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Todolist.Infrastructure\Todolist.Infrastructure.csproj" />
+		<ProjectReference Include="..\Todolist.Infrastructure\Todolist.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>
