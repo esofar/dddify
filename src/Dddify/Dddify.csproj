@@ -1,10 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 		<PackageId>Dddify</PackageId>
 		<Title>Dddify</Title>
 		<Version>1.0.0-alpha</Version>
@@ -12,7 +15,7 @@
 		<RepositoryUrl>https://github.com/esofar/dddify</RepositoryUrl>
 		<Copyright></Copyright>
 		<RepositoryType>git</RepositoryType>
-		<PackageTags>dddify;framework;clean-architecture;ddd;cqrs;aspnetcore;efcore</PackageTags>
+		<PackageTags>dddify;framework;ddd;cqrs;clean-architecture;aspnetcore</PackageTags>
 		<Description>A lightweight framework that practices Domain-Driven Design approach for building modern applications on ASP.NET Core.</Description>
 	</PropertyGroup>
 
@@ -30,18 +33,9 @@
 		<PackageReference Include="MediatR" Version="12.1.1" />
 		<PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.13" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
 	</ItemGroup>
-	
+
 </Project>
