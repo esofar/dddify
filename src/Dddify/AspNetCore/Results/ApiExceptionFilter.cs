@@ -12,7 +12,7 @@ public class ApiExceptionFilter : IAsyncExceptionFilter
     private readonly ILogger<ApiExceptionFilter> _logger;
     private readonly IApiResultWrapper _apiResultWrapper;
     private readonly IStringLocalizerFactory _localizerFactory;
-    private readonly IDictionary<Type, Func<ExceptionContext, ObjectResult>> _exceptionHandlers;
+    private readonly Dictionary<Type, Func<ExceptionContext, ObjectResult>> _exceptionHandlers;
 
     public ApiExceptionFilter(
         ILogger<ApiExceptionFilter> logger,
@@ -62,7 +62,9 @@ public class ApiExceptionFilter : IAsyncExceptionFilter
 
         var apiResult = string.IsNullOrEmpty(exception.Name)
             ? _apiResultWrapper.Failed()
-            : _apiResultWrapper.Failed(exception.Arguments.Any() ? localizer[exception.Name, exception.Arguments] : localizer[exception.Name]);
+            : _apiResultWrapper.Failed(exception.Arguments.Length != 0
+                ? localizer[exception.Name, exception.Arguments] 
+                : localizer[exception.Name]);
         
         return new ObjectResult(apiResult);
     }

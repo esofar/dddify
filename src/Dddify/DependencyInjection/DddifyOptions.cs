@@ -1,5 +1,4 @@
 ﻿using Dddify.Guids;
-using Dddify.Messaging.Behaviours;
 using System.Collections.Concurrent;
 
 namespace Dddify.DependencyInjection;
@@ -17,7 +16,7 @@ public partial class DddifyOptions
 
     public List<Type> OpenBehaviors => _openBehaviors;
 
-    public List<IOptionsExtension> Extensions => _extensionsMap.Values.ToList();
+    public List<IOptionsExtension> Extensions => [.. _extensionsMap.Values];
 
     public DateTimeKind DateTimeKind { get; set; } = DateTimeKind.Unspecified;
 

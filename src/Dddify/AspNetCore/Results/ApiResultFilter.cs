@@ -1,5 +1,4 @@
 ﻿using Dddify.System;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -16,9 +15,10 @@ public class ApiResultFilter : IAsyncResultFilter
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
+        var isApiController = context.ActionDescriptor.HasAttrbute<ApiControllerAttribute>();
         var disableApiResultWrapper = context.ActionDescriptor.HasAttrbute<DontWrapResultAttribute>();
 
-        if (!disableApiResultWrapper)
+        if (isApiController && !disableApiResultWrapper)
         {
             context.Result = context.Result switch
             {

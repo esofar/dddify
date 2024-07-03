@@ -16,7 +16,7 @@ public abstract class BussinessException : Exception
     /// <summary>
     /// Gets or sets the localized arguments associated with the exception.
     /// </summary>
-    public virtual string[] Arguments { get; } = Array.Empty<string>();
+    public virtual string[] Arguments { get; } = [];
 
     /// <summary>
     /// Gets or sets the type of the localized resource associated with the exception.
