@@ -2,7 +2,7 @@
 
 public abstract class AggregateRoot<TKey> : Entity<TKey>, IAggregateRoot
 {
-    private readonly List<IDomainEvent> _domainEvents = new();
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 

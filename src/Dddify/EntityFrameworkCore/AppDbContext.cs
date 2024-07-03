@@ -28,7 +28,7 @@ public class AppDbContext : DbContext
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             ConfigureBasePropertiesMethodInfo?.MakeGenericMethod(entityType.ClrType)
-                .Invoke(this, new object[] { modelBuilder, entityType });
+                .Invoke(this, [modelBuilder, entityType]);
         }
 
         base.OnModelCreating(modelBuilder);

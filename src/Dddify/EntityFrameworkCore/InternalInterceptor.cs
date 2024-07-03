@@ -10,20 +10,16 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Dddify.EntityFrameworkCore
 {
-    public class InternalInterceptor : SaveChangesInterceptor
+    public class InternalInterceptor(
+        IClock clock,
+        IPublisher publisher,
+        ICurrentUser currentUser,
+        IGuidGenerator guidGenerator) : SaveChangesInterceptor
     {
-        private readonly IClock _clock;
-        private readonly IPublisher _publisher;
-        private readonly ICurrentUser _currentUser;
-        private readonly IGuidGenerator _guidGenerator;
-
-        public InternalInterceptor(IClock clock, IPublisher publisher, ICurrentUser currentUser, IGuidGenerator guidGenerator)
-        {
-            _clock = clock;
-            _publisher = publisher;
-            _currentUser = currentUser;
-            _guidGenerator = guidGenerator;
-        }
+        private readonly IClock _clock = clock;
+        private readonly IPublisher _publisher = publisher;
+        private readonly ICurrentUser _currentUser = currentUser;
+        private readonly IGuidGenerator _guidGenerator = guidGenerator;
 
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
@@ -114,8 +110,8 @@ namespace Dddify.EntityFrameworkCore
 
                 entry.State = EntityState.Modified;
                 entity.IsDeleted = true;
-
-                TrySetModificationAuditProperties(entry);
+                entity.DeletedBy = _currentUser.Id;
+                entity.DeletedAt = _clock.Now;
             }
         }
 

@@ -9,4 +9,14 @@ public interface ISoftDeletable
     /// Determines whether the entity has been deleted.
     /// </summary>
     public bool IsDeleted { get; set; }
+
+    /// <summary>
+    /// The deletor for this entity.
+    /// </summary>
+    Guid? DeletedBy { get; set; }
+
+    /// <summary>
+    /// The deleted time for this entity.
+    /// </summary>
+    DateTime? DeletedAt { get; set; }
 }
