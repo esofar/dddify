@@ -1,6 +1,6 @@
-# Todolist
+# TodoListApp
 
-A simple TODO list application that currently only implements a Web API.
+A simple TODO list application implemented using ASP.NET Core Razor Pages.
 
 Launch the app:
 ```
