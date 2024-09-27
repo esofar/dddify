@@ -1,18 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Dddify.Dependency;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace Dddify.Identity;
 
-public class HttpContextUser : ICurrentUser
+public class HttpContextUser(IHttpContextAccessor httpContextAccessor) : ICurrentUser
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public HttpContextUser(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
-
-    public ClaimsPrincipal? Principal => _httpContextAccessor.HttpContext?.User;
+    public ClaimsPrincipal? Principal => httpContextAccessor.HttpContext?.User;
 
     public bool IsAuthenticated => Id.HasValue;
 

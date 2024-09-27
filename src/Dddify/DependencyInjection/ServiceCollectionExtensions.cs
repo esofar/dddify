@@ -9,6 +9,9 @@ using FluentValidation;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyModel;
+using Scrutor;
+using System;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -43,25 +46,17 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IClock>(_ => new Clock(options.DateTimeKind));
         services.AddTransient<IGuidGenerator>(_ => new SequentialGuidGenerator(options.SequentialGuidType));
-        services.AddTransient<ICurrentUser, HttpContextUser>();
+        services.AddScoped<ICurrentUser, HttpContextUser>();
         services.AddScoped<InternalInterceptor>();
 
         options.Extensions.ForEach(extension => extension.ConfigureServices(services));
 
         services.Scan(scan => scan.FromAssemblies(assemblies)
-               .AddClasses(classes => classes.AssignableTo<IDomainService>())
-                   .AsSelf()
-                   .WithTransientLifetime()
-               .AddClasses(classes => classes.AssignableTo<ITransientDependency>())
-                   .AsImplementedInterfaces()
-                   .WithTransientLifetime()
-               .AddClasses(classes => classes.AssignableTo<IScopedDependency>())
-                   .AsImplementedInterfaces()
-                   .WithScopedLifetime()
-               .AddClasses(classes => classes.AssignableTo<ISingletonDependency>())
-                   .AsImplementedInterfaces()
-                   .WithSingletonLifetime());
+                .RegisterDomainServices()
+                .RegisterDependencyServices());
 
         return services;
     }
+
+
 }

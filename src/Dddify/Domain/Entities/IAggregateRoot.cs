@@ -10,8 +10,6 @@ public interface IAggregateRoot : IEntity
 
     void AddDomainEvent(IDomainEvent @event);
 
-    void RemoveDomainEvent(IDomainEvent @event);
-
     void ClearDomainEvents();
 }
 

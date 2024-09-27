@@ -2,6 +2,7 @@
 
 /// <summary>
 /// This interface can be implemented to add standard logical deletion property to a class.
+/// This interface will add a IsDeleted property that marks whether the entity is logically deleted.
 /// </summary>
 public interface ISoftDeletable
 {

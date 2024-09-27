@@ -11,11 +11,6 @@ public abstract class AggregateRoot<TKey> : Entity<TKey>, IAggregateRoot
         _domainEvents.Add(@event);
     }
 
-    public void RemoveDomainEvent(IDomainEvent @event)
-    {
-        _domainEvents.Remove(@event);
-    }
-
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();
