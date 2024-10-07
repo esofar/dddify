@@ -1,6 +1,4 @@
-﻿using Dddify.Dependency;
-using Dddify.Domain;
-using Dddify.Domain.Entities;
+﻿using Dddify.Domain;
 using Dddify.Guids;
 using Dddify.Identity;
 using Dddify.Timing;
@@ -32,10 +30,30 @@ namespace Dddify.EntityFrameworkCore
 
         public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
-            ApplyConcepts(eventData.Context);
-            await DispatchDomainEventsAsync(eventData.Context, cancellationToken);
+            ArgumentNullException.ThrowIfNull(eventData.Context);
 
-            return await base.SavingChangesAsync(eventData, result, cancellationToken);
+            var context = eventData.Context;
+
+            await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+
+            try
+            {
+                ApplyConcepts(context);
+
+                var rows = await base.SavingChangesAsync(eventData, result, cancellationToken);
+
+                await DispatchDomainEventsAsync(context, cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+
+                return rows;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
         }
 
         protected void ApplyConcepts(DbContext? context)
@@ -69,7 +87,7 @@ namespace Dddify.EntityFrameworkCore
             ArgumentNullException.ThrowIfNull(context);
 
             var entities = context.ChangeTracker
-                .Entries<IAggregateRoot>()
+                .Entries<Entity>()
                 .Where(c => c.Entity.DomainEvents.Count != 0)
                 .ToList();
 
@@ -87,7 +105,7 @@ namespace Dddify.EntityFrameworkCore
 
         protected void TrySetCreationAuditProperties(EntityEntry entry)
         {
-            if (entry.Entity is ICreationAudited entity)
+            if (entry.Entity is ICreationAuditable entity)
             {
                 entity.CreatedBy = _currentUser.Id;
                 entity.CreatedAt = _clock.Now;
@@ -96,7 +114,7 @@ namespace Dddify.EntityFrameworkCore
 
         protected void TrySetModificationAuditProperties(EntityEntry entry)
         {
-            if (entry.Entity is IModificationAudited entity)
+            if (entry.Entity is IModificationAuditable entity)
             {
                 entity.UpdatedBy = _currentUser.Id;
                 entity.UpdatedAt = _clock.Now;

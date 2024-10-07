@@ -1,5 +1,4 @@
-﻿using Dddify.Dependency;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace Dddify.Identity;

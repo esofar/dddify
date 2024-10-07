@@ -3,9 +3,6 @@
 /// <summary>
 /// Represents an abstract base class for value objects.
 /// </summary>
-/// <remarks>
-/// Inspired from https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/microservice-ddd-cqrs-patterns/implement-value-objects
-/// </remarks>
 public abstract class ValueObject
 {
     protected static bool EqualOperator(ValueObject left, ValueObject right)
@@ -32,7 +29,7 @@ public abstract class ValueObject
             return false;
         }
 
-        var other = obj.As<ValueObject>();
+        var other = (ValueObject)obj;
         return GetEqualityComponents().SequenceEqual(other.GetEqualityComponents());
     }
 
@@ -41,5 +38,10 @@ public abstract class ValueObject
         return GetEqualityComponents()
             .Select(x => x != null ? x.GetHashCode() : 0)
             .Aggregate((x, y) => x ^ y);
+    }
+
+    public ValueObject? GetCopy()
+    {
+        return MemberwiseClone() as ValueObject;
     }
 }

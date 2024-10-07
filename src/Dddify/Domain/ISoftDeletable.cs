@@ -1,8 +1,8 @@
 ﻿namespace Dddify.Domain;
 
 /// <summary>
-/// This interface can be implemented to add standard logical deletion property to a class.
-/// This interface will add a IsDeleted property that marks whether the entity is logically deleted.
+/// Represents an interface for entities that support soft deletion.
+/// Soft deletion allows entities to be marked as deleted without being removed from the database, enabling recovery and auditing of deleted entities.
 /// </summary>
 public interface ISoftDeletable
 {
@@ -12,12 +12,12 @@ public interface ISoftDeletable
     public bool IsDeleted { get; set; }
 
     /// <summary>
-    /// The deletor for this entity.
+    /// Gets or sets the identifier of the user who deleted the entity.
     /// </summary>
     Guid? DeletedBy { get; set; }
 
     /// <summary>
-    /// The deleted time for this entity.
+    /// Gets or sets the date and time of when the entity was deleted.
     /// </summary>
     DateTime? DeletedAt { get; set; }
 }

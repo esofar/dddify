@@ -17,15 +17,14 @@ public class ValidationBehavior<TRequest>(IEnumerable<IValidator<TRequest>> vali
                 validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
             var failures = validationResults
-                .Where(r => r.Errors.Count != 0)
-                .SelectMany(r => r.Errors)
+                .SelectMany(result => result.Errors)
                 .ToList();
 
-            if (failures.Count != 0)
+            if (failures.Count > 0)
             {
                 var errors = failures
-                    .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
-                    .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
+                    .GroupBy(failure => failure.PropertyName, failure => failure.ErrorMessage)
+                    .ToDictionary(group => group.Key, group => group.ToArray());
 
                 throw new BadRequestException(errors);
             }

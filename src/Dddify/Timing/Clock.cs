@@ -1,19 +1,12 @@
 ﻿namespace Dddify.Timing;
 
-public class Clock : IClock
+public class Clock(DateTimeKind dateTimeKind) : IClock
 {
-    private readonly DateTimeKind _dateTimeKind;
+    public virtual DateTime Now => dateTimeKind == DateTimeKind.Utc ? DateTime.UtcNow : DateTime.Now;
 
-    public Clock(DateTimeKind dateTimeKind)
-    {
-        _dateTimeKind = dateTimeKind;
-    }
+    public virtual DateTimeKind Kind => dateTimeKind;
 
-    public virtual DateTime Now => _dateTimeKind == DateTimeKind.Utc ? DateTime.UtcNow : DateTime.Now;
-
-    public virtual DateTimeKind Kind => _dateTimeKind;
-
-    public virtual bool SupportsMultipleTimezone => _dateTimeKind == DateTimeKind.Utc;
+    public virtual bool SupportsMultipleTimezone => dateTimeKind == DateTimeKind.Utc;
 
     public virtual DateTime Normalize(DateTime dateTime)
     {

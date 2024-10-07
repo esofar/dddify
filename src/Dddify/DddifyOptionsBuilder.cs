@@ -4,7 +4,7 @@ using Dddify.Localization;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dddify.DependencyInjection;
+namespace Dddify;
 
 public class DddifyOptionsBuilder
 {

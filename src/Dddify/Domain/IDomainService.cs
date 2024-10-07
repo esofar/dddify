@@ -1,7 +1,10 @@
 ﻿namespace Dddify.Domain;
 
 /// <summary>
-/// This interface can be implemented by all domain services to identify them by convention.
+/// Represents a domain service.
+/// Domain services encapsulate domain logic that doesn't naturally fit within an entity or value object.
+/// They are used to handle domain operations that involve multiple entities or complex domain logic,
+/// without violating the encapsulation of the entities.
 /// </summary>
 public interface IDomainService
 {

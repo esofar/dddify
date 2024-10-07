@@ -1,19 +1,14 @@
-﻿using Dddify.Dependency;
-using Dddify.DependencyInjection;
-using Dddify.Domain;
-using Dddify.EntityFrameworkCore;
+﻿using Dddify.EntityFrameworkCore;
 using Dddify.Guids;
 using Dddify.Identity;
 using Dddify.Timing;
 using FluentValidation;
 using Mapster;
 using MapsterMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
-using Scrutor;
-using System;
-using System.Reflection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Dddify;
 
 public static class ServiceCollectionExtensions
 {
@@ -24,12 +19,9 @@ public static class ServiceCollectionExtensions
         var builder = new DddifyOptionsBuilder();
 
         optionsAction?.Invoke(builder);
-
         var options = builder.Build();
 
-        var assemblies = DependencyContext.Default!.GetInternalAssemblies().ToArray();
-
-        services.AddHttpContextAccessor();
+        var assemblies = DependencyContext.Default.GetProjectAssemblies();
 
         services.AddValidatorsFromAssemblies(assemblies);
 
@@ -39,21 +31,25 @@ public static class ServiceCollectionExtensions
             options.OpenBehaviors.ForEach(behavior => cfg.AddOpenBehavior(behavior));
         });
 
+        services.Scan(scan => scan.FromAssemblies(assemblies)
+                .RegisterDomainServices()
+                .RegisterDependencyServices());
+
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(assemblies);
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
 
         services.AddSingleton<IClock>(_ => new Clock(options.DateTimeKind));
+
         services.AddTransient<IGuidGenerator>(_ => new SequentialGuidGenerator(options.SequentialGuidType));
-        services.AddScoped<ICurrentUser, HttpContextUser>();
+        
         services.AddScoped<InternalInterceptor>();
 
-        options.Extensions.ForEach(extension => extension.ConfigureServices(services));
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, HttpContextUser>();
 
-        services.Scan(scan => scan.FromAssemblies(assemblies)
-                .RegisterDomainServices()
-                .RegisterDependencyServices());
+        options.Extensions.ForEach(extension => extension.ConfigureServices(services));
 
         return services;
     }

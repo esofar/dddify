@@ -1,7 +1,7 @@
 ﻿using Dddify.Guids;
 using System.Collections.Concurrent;
 
-namespace Dddify.DependencyInjection;
+namespace Dddify;
 
 public partial class DddifyOptions
 {

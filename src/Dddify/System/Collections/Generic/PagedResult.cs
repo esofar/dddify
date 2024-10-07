@@ -1,14 +1,8 @@
 ﻿namespace System.Collections.Generic;
 
-public class PagedResult<T> : IPagedResult<T>
+public class PagedResult<T>(int total, IEnumerable<T> items) : IPagedResult<T>
 {
-    public PagedResult(int total, IEnumerable<T> items)
-    {
-        Total = total;
-        Items = items;
-    }
+    public int Total => total;
 
-    public int Total { get; }
-
-    public IEnumerable<T> Items { get; }
+    public IEnumerable<T> Items => items;
 }

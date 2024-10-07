@@ -1,22 +1,15 @@
-﻿using Dddify.AspNetCore.Results;
-using Dddify.DependencyInjection;
+﻿using Dddify;
+using Dddify.AspNetCore.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public class ApiResultWrapperOptionsExtension : IOptionsExtension
+public class ApiResultWrapperOptionsExtension(Action<ApiResultWrapperOptions>? configure) : IOptionsExtension
 {
-    private readonly Action<ApiResultWrapperOptions>? _configure;
-
-    public ApiResultWrapperOptionsExtension(Action<ApiResultWrapperOptions>? configure)
-    {
-        _configure = configure;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
         var options = new ApiResultWrapperOptions();
-        _configure?.Invoke(options);
+        configure?.Invoke(options);
 
         services.AddTransient<IApiResultWrapper, ApiResultWrapper>();
 
@@ -33,9 +26,9 @@ public class ApiResultWrapperOptionsExtension : IOptionsExtension
             options.Filters.Add(typeof(ApiResultFilter));
         });
 
-        if (_configure != null)
+        if (configure != null)
         {
-            services.PostConfigure(_configure);
+            services.PostConfigure(configure);
         }
     }
 }

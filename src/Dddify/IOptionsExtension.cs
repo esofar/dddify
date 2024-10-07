@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Dddify.DependencyInjection;
+namespace Dddify;
 
 public interface IOptionsExtension
 {

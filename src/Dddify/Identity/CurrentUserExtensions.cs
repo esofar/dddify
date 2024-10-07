@@ -11,12 +11,12 @@ public static class CurrentUserExtensions
 
     public static Claim[] FindClaims(this ICurrentUser currentUser, string claimType)
     {
-        return currentUser.Principal?.Claims.Where(c => c.Type == claimType).ToArray() ?? Array.Empty<Claim>();
+        return currentUser.Principal?.Claims.Where(c => c.Type == claimType).ToArray() ?? [];
     }
 
     public static Claim[] GetAllClaims(this ICurrentUser currentUser)
     {
-        return currentUser.Principal?.Claims.ToArray() ?? Array.Empty<Claim>();
+        return currentUser.Principal?.Claims.ToArray() ?? [];
     }
 
     public static bool IsInRole(this ICurrentUser currentUser, string roleName)

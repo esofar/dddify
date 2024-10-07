@@ -12,7 +12,7 @@ public static class QueryableExtensions
     /// <param name="query">The <see cref="IQueryable{T}"/> to convert.</param>
     /// <param name="page">The page number.</param>
     /// <param name="size">The number of records per page.</param>
-    /// <returns>An <see cref="IPagedResult{T}"/> representing the paged result.</returns>
+    /// <returns>An <see cref="IPagedResult{T}"/>representing the paged result.</returns>
     public static IPagedResult<T> ToPagedResult<T>(this IQueryable<T> query, int page, int size)
     {
         var total = query.Count();

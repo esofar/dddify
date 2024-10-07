@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -24,18 +24,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.1.21" />
-		<PackageReference Include="Scrutor" Version="4.2.2" />
-		<PackageReference Include="MediatR" Version="12.1.1" />
+		<PackageReference Include="Dapper" Version="2.1.35" />
+		<PackageReference Include="Scrutor" Version="5.0.1" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
 	</ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using Dddify.Domain;
 using Scrutor;
 using System.Reflection;
 
-namespace Dddify.DependencyInjection;
+namespace Dddify;
 
 public static class ScrutorExtensions
 {

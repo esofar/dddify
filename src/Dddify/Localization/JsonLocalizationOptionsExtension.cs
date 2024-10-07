@@ -1,4 +1,4 @@
-﻿using Dddify.DependencyInjection;
+﻿using Dddify;
 using Dddify.Localization;
 using Dddify.Localization.Internal;
 using Microsoft.AspNetCore.Builder;
