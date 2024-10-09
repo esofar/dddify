@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents base class for <see cref="IEntity"/>.
 /// </summary>
-public abstract class Entity : IEntity
+public abstract class Entity : IEntity, IHasDomainEvents
 {
     public abstract object[] GetKeys();
 
@@ -14,23 +14,10 @@ public abstract class Entity : IEntity
 
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    /// <summary>
-    /// Gets the collection of domain events that have occurred within the aggregate.
-    /// Domain events represent significant changes in the state of the aggregate that may need to be handled by other parts of the system.
-    /// </summary>
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-    /// <summary>
-    /// Adds a domain event to the aggregate's domain events collection.
-    /// This method is used to register significant state changes that should be communicated to other parts of the system.
-    /// </summary>
-    /// <param name="event">The domain event to add.</param>
     public void AddDomainEvent(IDomainEvent @event) => _domainEvents.Add(@event);
 
-    /// <summary>
-    /// Clears all domain events from the aggregate's domain events collection.
-    /// This method is typically called after the events have been processed, ensuring that no old events are left for subsequent operations.
-    /// </summary>
     public void ClearDomainEvents() => _domainEvents.Clear();
 }
 

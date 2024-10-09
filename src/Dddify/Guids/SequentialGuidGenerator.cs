@@ -90,9 +90,4 @@ public class SequentialGuidGenerator : IGuidGenerator
 
         return new Guid(guidBytes);
     }
-
-    public string CreateAsString(string format = "N")
-    {
-       return Create().ToString(format);
-    }
 }

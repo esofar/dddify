@@ -1,4 +1,5 @@
 ﻿using Dddify.Guids;
+using Dddify.Messaging.Behaviours;
 using System.Collections.Concurrent;
 
 namespace Dddify;
@@ -11,7 +12,7 @@ public partial class DddifyOptions
     public DddifyOptions()
     {
         _extensionsMap = new ConcurrentDictionary<Type, IOptionsExtension>();
-        _openBehaviors = new List<Type>();
+        _openBehaviors = [];
     }
 
     public List<Type> OpenBehaviors => _openBehaviors;

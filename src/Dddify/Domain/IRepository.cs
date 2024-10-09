@@ -2,17 +2,19 @@
 
 namespace Dddify.Domain;
 
-public interface IRepository<TEntity, TKey>
-    where TEntity : Entity<TKey>, IAggregateRoot
-    where TKey : IComparable<TKey>
+public interface IRepository<TEntity> where TEntity : Entity, IAggregateRoot
 {
-    Task<TEntity?> GetAsync(TKey id, CancellationToken cancellationToken = default);
+    public IQueryable<TEntity> Queryable();
+
+    public IQueryable<TEntity> AsNoTrackingQueryable();
+
+    Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
-    Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
+    Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default);
 
     Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
 

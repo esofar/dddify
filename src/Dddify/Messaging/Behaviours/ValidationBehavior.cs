@@ -1,13 +1,13 @@
 ﻿using Dddify.Exceptions;
 using FluentValidation;
-using MediatR.Pipeline;
+using MediatR;
 
 namespace Dddify.Messaging.Behaviours;
 
-public class ValidationBehavior<TRequest>(IEnumerable<IValidator<TRequest>> validators) : IRequestPreProcessor<TRequest>
-    where TRequest : notnull
+public class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) 
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
-    public async Task Process(TRequest request, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (validators.Any())
         {
@@ -22,12 +22,10 @@ public class ValidationBehavior<TRequest>(IEnumerable<IValidator<TRequest>> vali
 
             if (failures.Count > 0)
             {
-                var errors = failures
-                    .GroupBy(failure => failure.PropertyName, failure => failure.ErrorMessage)
-                    .ToDictionary(group => group.Key, group => group.ToArray());
-
-                throw new BadRequestException(errors);
+                throw new BadRequestException(failures);
             }
         }
+
+        return await next();
     }
 }

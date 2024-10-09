@@ -4,17 +4,20 @@ using System.Linq.Expressions;
 
 namespace Dddify.EntityFrameworkCore;
 
-public abstract class Repository<TDbContext, TEntity, TKey>(TDbContext context) : IRepository<TEntity, TKey>
-    where TDbContext : AppDbContext
-    where TEntity : Entity<TKey>, IAggregateRoot
-    where TKey : IComparable<TKey>
+public abstract class Repository<TDbContext, TEntity>(TDbContext context) : IRepository<TEntity>
+    where TDbContext : DbContext
+    where TEntity : Entity, IAggregateRoot
 {
-    public async virtual Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public IQueryable<TEntity> Queryable() => context.Set<TEntity>();
+
+    public IQueryable<TEntity> AsNoTrackingQueryable() => context.Set<TEntity>().AsNoTracking();
+
+    public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Set<TEntity>().ToListAsync(cancellationToken);
     }
 
-    public async virtual Task<TEntity?> GetAsync(TKey id, CancellationToken cancellationToken = default)
+    public async virtual Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await context.FindAsync<TEntity>([id], cancellationToken);
     }
@@ -24,7 +27,7 @@ public abstract class Repository<TDbContext, TEntity, TKey>(TDbContext context) 
         return await context.Set<TEntity>().Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public async virtual Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    public async virtual Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
     {
         return await context.Set<TEntity>().AnyAsync(predicate, cancellationToken);
     }

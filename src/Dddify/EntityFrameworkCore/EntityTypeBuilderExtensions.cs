@@ -20,7 +20,7 @@ public static class EntityTypeBuilderExtensions
         {
             var fieldName = nameof(ISoftDeletable.IsDeleted);
             builder.Property(fieldName).IsRequired();
-            builder.HasQueryFilter(e => !EF.Property<bool>(e, fieldName));
+            builder.HasQueryFilter(entity => !EF.Property<bool>(entity, fieldName));
         }
     }
 

@@ -15,45 +15,26 @@ namespace Dddify.EntityFrameworkCore
         ICurrentUser currentUser,
         IGuidGenerator guidGenerator) : SaveChangesInterceptor
     {
-        private readonly IClock _clock = clock;
-        private readonly IPublisher _publisher = publisher;
-        private readonly ICurrentUser _currentUser = currentUser;
-        private readonly IGuidGenerator _guidGenerator = guidGenerator;
-
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
             ApplyConcepts(eventData.Context);
+
+            var rows = base.SavingChanges(eventData, result);
+
             DispatchDomainEventsAsync(eventData.Context).GetAwaiter().GetResult();
 
-            return base.SavingChanges(eventData, result);
+            return rows;
         }
 
         public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(eventData.Context);
+            ApplyConcepts(eventData.Context);
 
-            var context = eventData.Context;
+            var rows = await base.SavingChangesAsync(eventData, result, cancellationToken);
 
-            await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
+            await DispatchDomainEventsAsync(eventData.Context, cancellationToken);
 
-            try
-            {
-                ApplyConcepts(context);
-
-                var rows = await base.SavingChangesAsync(eventData, result, cancellationToken);
-
-                await DispatchDomainEventsAsync(context, cancellationToken);
-
-                await transaction.CommitAsync(cancellationToken);
-
-                return rows;
-            }
-            catch (Exception)
-            {
-                await transaction.RollbackAsync(cancellationToken);
-
-                throw;
-            }
+            return rows;
         }
 
         protected void ApplyConcepts(DbContext? context)
@@ -87,7 +68,7 @@ namespace Dddify.EntityFrameworkCore
             ArgumentNullException.ThrowIfNull(context);
 
             var entities = context.ChangeTracker
-                .Entries<Entity>()
+                .Entries<IHasDomainEvents>()
                 .Where(c => c.Entity.DomainEvents.Count != 0)
                 .ToList();
 
@@ -99,7 +80,7 @@ namespace Dddify.EntityFrameworkCore
 
             foreach (var domainEvent in domainEvents)
             {
-                await _publisher.Publish(domainEvent, cancellationToken);
+                await publisher.Publish(domainEvent, cancellationToken);
             }
         }
 
@@ -107,8 +88,8 @@ namespace Dddify.EntityFrameworkCore
         {
             if (entry.Entity is ICreationAuditable entity)
             {
-                entity.CreatedBy = _currentUser.Id;
-                entity.CreatedAt = _clock.Now;
+                entity.CreatedBy = currentUser.Id;
+                entity.CreatedAt = clock.Now;
             }
         }
 
@@ -116,8 +97,8 @@ namespace Dddify.EntityFrameworkCore
         {
             if (entry.Entity is IModificationAuditable entity)
             {
-                entity.UpdatedBy = _currentUser.Id;
-                entity.UpdatedAt = _clock.Now;
+                entity.UpdatedBy = currentUser.Id;
+                entity.UpdatedAt = clock.Now;
             }
         }
 
@@ -126,11 +107,10 @@ namespace Dddify.EntityFrameworkCore
             if (entry.Entity is ISoftDeletable entity)
             {
                 entry.Reload();
-
                 entry.State = EntityState.Modified;
                 entity.IsDeleted = true;
-                entity.DeletedBy = _currentUser.Id;
-                entity.DeletedAt = _clock.Now;
+                entity.DeletedBy = currentUser.Id;
+                entity.DeletedAt = clock.Now;
             }
         }
 
@@ -140,7 +120,7 @@ namespace Dddify.EntityFrameworkCore
             {
                 if (string.IsNullOrEmpty(entity.ConcurrencyStamp))
                 {
-                    entity.ConcurrencyStamp = _guidGenerator.CreateAsString();
+                    entity.ConcurrencyStamp = Guid.NewGuid().ToString("N");
                 }
             }
         }
@@ -152,20 +132,15 @@ namespace Dddify.EntityFrameworkCore
             if (entry.Entity is IHasConcurrencyStamp entity)
             {
                 context.Entry(entity).Property(x => x.ConcurrencyStamp).OriginalValue = entity.ConcurrencyStamp;
-                entity.ConcurrencyStamp = _guidGenerator.CreateAsString();
+                entity.ConcurrencyStamp = Guid.NewGuid().ToString("N");
             }
         }
 
         protected void TrySetGuidId(EntityEntry entry)
         {
-            if (entry.Entity is IEntity<Guid> entity)
+            if (entry.Entity is IEntity<Guid> entity && entity.Id == default)
             {
-                if (entity.Id != default)
-                {
-                    return;
-                }
-
-                entity.Id = _guidGenerator.Create();
+                entity.Id = guidGenerator.Create();
             }
         }
     }

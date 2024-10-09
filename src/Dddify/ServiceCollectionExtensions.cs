@@ -1,10 +1,11 @@
 ﻿using Dddify.EntityFrameworkCore;
 using Dddify.Guids;
 using Dddify.Identity;
+using Dddify.Messaging.Behaviours;
 using Dddify.Timing;
 using FluentValidation;
 using Mapster;
-using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 
@@ -19,32 +20,34 @@ public static class ServiceCollectionExtensions
         var builder = new DddifyOptionsBuilder();
 
         optionsAction?.Invoke(builder);
+
         var options = builder.Build();
 
-        var assemblies = DependencyContext.Default.GetProjectAssemblies();
+        var assemblies = DependencyContext.Default.GetProjectAndDddifyAssemblies();
 
         services.AddValidatorsFromAssemblies(assemblies);
 
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(assemblies);
+
+            cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+            cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+
             options.OpenBehaviors.ForEach(behavior => cfg.AddOpenBehavior(behavior));
         });
 
         services.Scan(scan => scan.FromAssemblies(assemblies)
-                .RegisterDomainServices()
-                .RegisterDependencyServices());
+            .RegisterAttributeDependencies()
+            .RegisterDomainServices()
+            .RegisterRepositories());
 
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(assemblies);
-        services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();
 
         services.AddSingleton<IClock>(_ => new Clock(options.DateTimeKind));
 
         services.AddTransient<IGuidGenerator>(_ => new SequentialGuidGenerator(options.SequentialGuidType));
-        
-        services.AddScoped<InternalInterceptor>();
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUser, HttpContextUser>();
@@ -53,6 +56,5 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-
 
 }

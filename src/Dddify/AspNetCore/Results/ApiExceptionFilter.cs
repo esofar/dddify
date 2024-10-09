@@ -72,7 +72,7 @@ public class ApiExceptionFilter : IAsyncExceptionFilter
     private ObjectResult HandleBadRequestException(ExceptionContext context)
     {
         var exception = context.Exception as BadRequestException;
-        var apiResult = _apiResultWrapper.Failed(exception!.Error);
+        var apiResult = _apiResultWrapper.Failed(exception!.Errors);
 
         return new BadRequestObjectResult(apiResult);
     }

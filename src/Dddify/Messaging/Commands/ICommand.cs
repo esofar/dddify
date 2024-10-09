@@ -16,3 +16,11 @@ public interface ICommand : IRequest
 public interface ICommand<out TResult> : IRequest<TResult>
 {
 }
+
+public interface IUnitOfWorkCommand : ICommand
+{
+}
+
+public interface IUnitOfWorkCommand<out TResult> : ICommand<TResult>
+{
+}

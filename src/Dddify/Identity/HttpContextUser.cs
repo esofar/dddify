@@ -9,7 +9,7 @@ public class HttpContextUser(IHttpContextAccessor httpContextAccessor) : ICurren
 
     public bool IsAuthenticated => Id.HasValue;
 
-    public Guid? Id => this.FindClaimValue(DefaultClaimTypes.UserId)?.ToGuid();
+    public Guid? Id => this.FindClaimValue(ClaimTypes.NameIdentifier)?.ToGuid();
 
     public string? Name => this.FindClaimValue(DefaultClaimTypes.FullName);
 

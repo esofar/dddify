@@ -1,10 +1,11 @@
 ﻿using Dddify.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Dddify.EntityFrameworkCore;
 
 public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
-    where TDbContext : AppDbContext
+    where TDbContext : DbContext
 {
     private IDbContextTransaction? _currentTransaction;
 
@@ -36,7 +37,7 @@ public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
         }
     }
 
-    public async Task<int> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         if (_currentTransaction == null)
         {
@@ -47,8 +48,9 @@ public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
                 try
                 {
                     var rows = await context.SaveChangesAsync(cancellationToken);
-                    // TODO: await _mediator.DispatchDomainEventsAsync(this, 0, cancellationToken);
+
                     await CommitAsync(cancellationToken);
+
                     return rows;
                 }
                 catch
@@ -60,15 +62,7 @@ public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
         }
         else
         {
-            var rows = await context.SaveChangesAsync(cancellationToken);
-            // TODO: await _mediator.DispatchDomainEventsAsync(this, 0, cancellationToken);
-            return rows;
+            return await context.SaveChangesAsync(cancellationToken);
         }
     }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await context.SaveChangesAsync(cancellationToken);
-    }
-
 }

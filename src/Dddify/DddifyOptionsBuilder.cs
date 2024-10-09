@@ -74,7 +74,7 @@ public class DddifyOptionsBuilder
     /// <typeparam name="TExtension">The type of extension to be added or updated.</typeparam>
     /// <param name="extension">The extension to be added or updated.</param>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
-    public DddifyOptionsBuilder WithExtension<TExtension>(TExtension extension)
+    private DddifyOptionsBuilder WithExtension<TExtension>(TExtension extension)
         where TExtension : IOptionsExtension
     {
         _options.AddOrUpdateExtension(extension);

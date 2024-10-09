@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dddify.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
@@ -6,22 +8,22 @@ namespace Dddify.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
-    private readonly InternalInterceptor _internalInterceptor;
+    private readonly IEnumerable<IInterceptor> _interceptors;
 
-    private static readonly MethodInfo? ConfigureBasePropertiesMethodInfo
-        = typeof(AppDbContext)
-            .GetMethod(nameof(ConfigureBaseProperties), BindingFlags.Instance | BindingFlags.NonPublic);
+    private static readonly MethodInfo? ConfigurePropertiesMethodInfo =
+        typeof(AppDbContext)
+            .GetMethod(nameof(ConfigureProperties), BindingFlags.Instance | BindingFlags.NonPublic);
 
-    public AppDbContext(DbContextOptions options, InternalInterceptor internalInterceptor)
+    public AppDbContext(DbContextOptions options, IEnumerable<IInterceptor> interceptors)
         : base(options)
     {
-        _internalInterceptor = internalInterceptor;
+        _interceptors = interceptors;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Model.GetEntityTypes()
-            .ForEach(entityType => ConfigureBasePropertiesMethodInfo?
+            .ForEach(entityType => ConfigurePropertiesMethodInfo?
                 .MakeGenericMethod(entityType.ClrType)
                 .Invoke(this, [modelBuilder, entityType]));
 
@@ -30,16 +32,25 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.AddInterceptors(_internalInterceptor);
+        optionsBuilder.AddInterceptors(_interceptors);
 
         base.OnConfiguring(optionsBuilder);
     }
 
-    protected virtual void ConfigureBaseProperties<TEntity>(ModelBuilder modelBuilder, IMutableEntityType mutableEntityType) where TEntity : class
+    protected virtual void ConfigureProperties<TEntity>(ModelBuilder modelBuilder, IMutableEntityType mutableEntityType) where TEntity : class
     {
-        if (!mutableEntityType.IsOwned())
-        {
-            modelBuilder.Entity<TEntity>().ConfigureByConvention();
-        }
+        if (mutableEntityType.IsOwned()) return;
+
+        if (!typeof(TEntity).IsAssignableTo<IEntity>()) return;
+
+        modelBuilder.Entity<TEntity>().ConfigureByConvention();
     }
+
+}
+
+
+public class AppDbContextOptions : DbContextOptions<AppDbContext>
+{
+    public string MyProperty { get; set; }
+
 }
