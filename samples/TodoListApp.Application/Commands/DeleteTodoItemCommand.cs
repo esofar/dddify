@@ -29,6 +29,6 @@ public class DeleteTodoItemCommandHandler(IApplicationDbContext context) : IComm
 
         context.TodoItems.Remove(todoItem);
 
-        await context.SaveChangesAsync(cancellationToken);
+        //await context.SaveChangesAsync(cancellationToken);
     }
 }

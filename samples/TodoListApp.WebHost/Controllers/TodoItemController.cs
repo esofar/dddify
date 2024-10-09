@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TodoListApp.Application.Commands;
 using TodoListApp.Application.Dtos;
 using TodoListApp.Application.Queries;
-using TodoListApp.WebHost.Dtos;
+using TodoListApp.WebHost.Models;
 
 namespace TodoListApp.WebHost.Controllers
 {
@@ -31,7 +31,7 @@ namespace TodoListApp.WebHost.Controllers
         [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResultWithError), StatusCodes.Status400BadRequest)]
         [HttpPost]
-        public async Task PostAsync([FromBody] CreateTodoItemDto request)
+        public async Task PostAsync([FromBody] CreateTodoItemRequest request)
         {
             await sender.Send(new CreateTodoItemCommand(request.Text, request.PriorityLevel));
         }
@@ -45,13 +45,13 @@ namespace TodoListApp.WebHost.Controllers
         [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResultWithError), StatusCodes.Status400BadRequest)]
         [HttpPut("{id}")]
-        public async Task PutAsync([FromRoute] Guid id, [FromBody] UpdateTodoItemDto request)
+        public async Task PutAsync([FromRoute] Guid id, [FromBody] UpdateTodoItemRequest request)
         {
             await sender.Send(new UpdateTodoItemCommand(id, request.IsDone));
         }
 
         /// <summary>
-        /// Deletes a Todo item by its ID.
+        /// Deletes a Todo item.
         /// </summary>
         /// <param name="id">The ID of the Todo item to delete.</param>
         [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]

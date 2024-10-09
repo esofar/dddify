@@ -1,16 +1,17 @@
-﻿using Dddify.Domain.Entities;
+﻿using Dddify.Domain;
 using TodoListApp.Domain.Enums;
-using TodoListApp.Domain.Events;
+using TodoListApp.Domain.DomainEvents;
 
 namespace TodoListApp.Domain.Entities;
 
-public class TodoItem : FullAuditedAggregateRoot<Guid>
+public class TodoItem : FullAuditableAggregateRoot<Guid>
 {
     public TodoItem(string text, PriorityLevel priorityLevel)
     {
         Text = text;
         PriorityLevel = priorityLevel;
-        AddDomainEvent(new TodoItemCreatedEvent(this));
+
+        AddDomainEvent(new TodoItemCreatedDomainEvent(this));
     }
 
     private TodoItem() { }
@@ -24,6 +25,6 @@ public class TodoItem : FullAuditedAggregateRoot<Guid>
     public void Complete(bool isDone)
     {
         IsDone = isDone;
-        AddDomainEvent(new TodoItemCompletedEvent(this));
+        AddDomainEvent(new TodoItemCompletedDomainEvent(this));
     }
 }

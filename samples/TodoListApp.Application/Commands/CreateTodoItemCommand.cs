@@ -19,19 +19,19 @@ public class CreateTodoItemCommandValidator : AbstractValidator<CreateTodoItemCo
     }
 }
 
-public class CreateTodoItemCommandHandler(IApplicationDbContext context) : ICommandHandler<CreateTodoItemCommand>
+public class CreateTodoItemCommandHandler(ITodoItemRepository todoItemRepository ) : ICommandHandler<CreateTodoItemCommand>
 {
     public async Task Handle(CreateTodoItemCommand command, CancellationToken cancellationToken)
     {
-        if (await context.TodoItems.AnyAsync(c => c.Text == command.Text, cancellationToken))
+        if (await todoItemRepository.AnyAsync(c => c.Text == command.Text, cancellationToken))
         {
             throw new TodoItemDuplicateException(command.Text);
         }
 
-        var todoItem = new TodoItem(command.Text, command.PriorityLevel.ToEnum<PriorityLevel>());
+        var todoItem = new TodoItem(
+            command.Text, 
+            command.PriorityLevel.ToEnum<PriorityLevel>());
 
-        await context.TodoItems.AddAsync(todoItem, cancellationToken);
-
-        await context.SaveChangesAsync(cancellationToken);
+        await todoItemRepository.AddAsync(todoItem, cancellationToken);
     }
 }

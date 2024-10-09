@@ -7,17 +7,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO List - Dddify</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>TODO LIST - Dddify</title>
+    <link href="~/css/tailwind.min.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js"></script>
 </head>
 <body class="bg-gray-100 p-6">
     <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
         <div class="md:flex">
             <div class="p-8 w-full">
-                <h1 class="text-3xl font-bold text-center mb-6">TODO List</h1>
+                <h1 class="text-3xl font-bold text-center mb-6">TODO LIST</h1>
                 <div class="mt-4 flex space-x-2">
-                    <input id="new-todo-item-text" type="text" placeholder="Enter a new TODO item" autocomplete="off" class="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <input id="new-todo-item-text" type="text" placeholder="enter text..." autocomplete="off" class="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                     <select id="new-todo-item-priority" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
@@ -51,9 +53,6 @@
     <footer class="mt-6 text-center text-gray-600">
         &copy; 2024 Dddify Framework. All rights reserved.
     </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/js/site.js"></script>
 </body>
 </html>
 

@@ -1,13 +1,13 @@
 ﻿using Dddify.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using TodoListApp.Domain.Entities;
 using TodoListApp.Domain.Repositories;
 
 namespace TodoListApp.Infrastructure.Repositories;
 
-public class ApplicationDbContext(
-    DbContextOptions options,
-    InternalInterceptor internalInterceptor) : AppDbContext(options, internalInterceptor), IApplicationDbContext
+public class ApplicationDbContext(DbContextOptions options, IEnumerable<IInterceptor> interceptors)
+    : AppDbContext(options, interceptors), IApplicationDbContext
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

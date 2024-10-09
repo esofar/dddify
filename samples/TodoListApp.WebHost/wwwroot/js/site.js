@@ -54,10 +54,10 @@ $(function () {
     const addTodoItem = async () => {
         const newTodoItemText = $('#new-todo-item-text').val().trim();
         const newTodoItemPriority = $('#new-todo-item-priority').val();
-        if (newTodoItemText === '') {
-            showError('Please enter text.');
-            return;
-        }
+        //if (newTodoItemText === '') {
+        //    showError('Please enter text.');
+        //    return;
+        //}
         if (newTodoItemText.length > 50) {
             showError('Character length should not exceed 50.');
             return;
