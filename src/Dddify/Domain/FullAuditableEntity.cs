@@ -1,7 +1,7 @@
 ﻿namespace Dddify.Domain;
 
 /// <summary>
-/// Represents a fully auditable entity that tracks creation, modification, and deletion information. 
+/// Represents a fully auditable entity that tracks creation, modification, and soft-deletion information. 
 /// </summary>
 /// <remarks>
 /// This class inherits from <see cref="Entity{TKey}"/> and implements <see cref="IFullAuditable"/> to provide complete audit capabilities.

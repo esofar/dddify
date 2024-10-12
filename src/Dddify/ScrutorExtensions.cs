@@ -1,6 +1,5 @@
 ﻿using Dddify.Dependency;
 using Dddify.Domain;
-using Dddify.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
 using System.Reflection;
@@ -9,6 +8,41 @@ namespace Dddify;
 
 public static class ScrutorExtensions
 {
+    public static IImplementationTypeSelector WithLifetime(
+        this ILifetimeSelector lifetimeSelector,
+        ServiceLifetime lifetime) => lifetime switch
+        {
+            ServiceLifetime.Singleton => lifetimeSelector.WithSingletonLifetime(),
+            ServiceLifetime.Scoped => lifetimeSelector.WithScopedLifetime(),
+            ServiceLifetime.Transient => lifetimeSelector.WithTransientLifetime(),
+            _ => throw new ArgumentOutOfRangeException($"Unsupported lifetime: {lifetime}")
+        };
+
+    public static IImplementationTypeSelector Register(
+        this IServiceTypeSelector serviceTypeSelector,
+        RegistrationType registrationType,
+        ServiceLifetime lifetime) => registrationType switch
+        {
+            RegistrationType.AsSelf => WithLifetime(serviceTypeSelector.AsSelf(), lifetime),
+            RegistrationType.AsMatchingInterface => WithLifetime(serviceTypeSelector.AsMatchingInterface(), lifetime),
+            RegistrationType.AsImplementedInterfaces => WithLifetime(serviceTypeSelector.AsImplementedInterfaces(), lifetime),
+            _ => throw new ArgumentOutOfRangeException($"Unsupported registrationType: {registrationType}")
+        };
+
+    public static IImplementationTypeSelector RegisterDomainServices(this IImplementationTypeSelector selector)
+    {
+        return selector
+            .AddClasses(classes => classes.AssignableTo<IDomainService>())
+            .Register(RegistrationType.AsSelf, ServiceLifetime.Scoped);
+    }
+
+    public static IImplementationTypeSelector RegisterRepositories(this IImplementationTypeSelector selector)
+    {
+        return selector
+            .AddClasses(classes => classes.AssignableTo(typeof(IRepository<,>)))
+            .Register(RegistrationType.AsMatchingInterface, ServiceLifetime.Scoped);
+    }
+
     public static IImplementationTypeSelector RegisterAttributeDependencies(this IImplementationTypeSelector selector)
     {
         var registrationTypes = Enum.GetValues(typeof(RegistrationType)).Cast<RegistrationType>();
@@ -20,66 +54,15 @@ public static class ScrutorExtensions
             { typeof(TransientDependencyAttribute), ServiceLifetime.Transient},
         };
 
-        void WithLifetime(ILifetimeSelector lifetimeSelector, ServiceLifetime lifetime)
-        {
-            switch (lifetime)
-            {
-                case ServiceLifetime.Singleton:
-                    lifetimeSelector.WithSingletonLifetime();
-                    break;
-                case ServiceLifetime.Scoped:
-                    lifetimeSelector.WithScopedLifetime();
-                    break;
-                case ServiceLifetime.Transient:
-                    lifetimeSelector.WithTransientLifetime();
-                    break;
-            }
-        }
-
-        void RegisterServices(IServiceTypeSelector serviceTypeSelector, RegistrationType registrationType, ServiceLifetime lifetime)
-        {
-            switch (registrationType)
-            {
-                case RegistrationType.AsSelf:
-                    WithLifetime(serviceTypeSelector.AsSelf(), lifetime);
-                    break;
-                case RegistrationType.AsMatchingInterface:
-                    WithLifetime(serviceTypeSelector.AsMatchingInterface(), lifetime);
-                    break;
-                case RegistrationType.AsImplementedInterfaces:
-                    WithLifetime(serviceTypeSelector.AsImplementedInterfaces(), lifetime);
-                    break;
-            }
-        }
-
         foreach (var registrationType in registrationTypes)
         {
             foreach (var attributeLifetime in attributeLifetimes)
             {
-                var classes = selector.AddClasses(
-                    cls => cls.Where(
-                        type => type.GetCustomAttribute(attributeLifetime.Key) is DependencyAttribute attribute && attribute.RegistrationType == registrationType));
-
-                RegisterServices(classes, registrationType, attributeLifetime.Value);
+                selector.AddClasses(cls => cls.Where(type => type.GetCustomAttribute(attributeLifetime.Key) is DependencyAttribute attribute && attribute.RegistrationType == registrationType))
+                    .Register(registrationType, attributeLifetime.Value);
             }
         }
 
         return selector;
-    }
-
-    public static IImplementationTypeSelector RegisterDomainServices(this IImplementationTypeSelector selector)
-    {
-        return selector
-            .AddClasses(classes => classes.AssignableTo<IDomainService>())
-                .AsSelf()
-                .WithTransientLifetime();
-    }
-
-    public static IImplementationTypeSelector RegisterRepositories(this IImplementationTypeSelector selector)
-    {
-        return selector
-            .AddClasses(classes => classes.AssignableTo(typeof(IRepository<>)))
-                .AsMatchingInterface()
-                .WithScopedLifetime();
     }
 }

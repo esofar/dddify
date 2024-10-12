@@ -1,24 +1,15 @@
 ﻿using Dddify.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
 namespace Dddify.EntityFrameworkCore;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
-    private readonly IEnumerable<IInterceptor> _interceptors;
-
     private static readonly MethodInfo? ConfigurePropertiesMethodInfo =
         typeof(AppDbContext)
             .GetMethod(nameof(ConfigureProperties), BindingFlags.Instance | BindingFlags.NonPublic);
-
-    public AppDbContext(DbContextOptions options, IEnumerable<IInterceptor> interceptors)
-        : base(options)
-    {
-        _interceptors = interceptors;
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,27 +21,12 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected virtual void ConfigureProperties<TEntity>(ModelBuilder modelBuilder, IMutableEntityType mutableEntityType)
+        where TEntity : class, IEntity
     {
-        optionsBuilder.AddInterceptors(_interceptors);
-
-        base.OnConfiguring(optionsBuilder);
+        if (!mutableEntityType.IsOwned())
+        {
+            modelBuilder.Entity<TEntity>().ConfigureByConvention();
+        }
     }
-
-    protected virtual void ConfigureProperties<TEntity>(ModelBuilder modelBuilder, IMutableEntityType mutableEntityType) where TEntity : class
-    {
-        if (mutableEntityType.IsOwned()) return;
-
-        if (!typeof(TEntity).IsAssignableTo<IEntity>()) return;
-
-        modelBuilder.Entity<TEntity>().ConfigureByConvention();
-    }
-
-}
-
-
-public class AppDbContextOptions : DbContextOptions<AppDbContext>
-{
-    public string MyProperty { get; set; }
-
 }

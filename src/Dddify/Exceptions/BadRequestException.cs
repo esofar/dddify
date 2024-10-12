@@ -5,22 +5,17 @@ namespace Dddify.Exceptions;
 /// <summary>
 /// Represents an exception that occurs when one or more validation failures have occurred.
 /// </summary>
-public class BadRequestException : Exception
+/// <remarks>
+/// Initializes a new instance of the <see cref="BadRequestException"/> class with the specified validation failures.
+/// </remarks>
+/// <param name="failures">validation failures.</param>
+public class BadRequestException(IEnumerable<ValidationFailure> failures) 
+    : Exception("One or more validation failures have occurred.")
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BadRequestException"/> class with the specified validation failures.
-    /// </summary>
-    /// <param name="failures">validation failures.</param>
-    public BadRequestException(IEnumerable<ValidationFailure> failures)
-        : base("One or more validation failures have occurred.")
-    {
-        Errors = failures
-            .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
-            .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
-    }
-
     /// <summary>
     /// Gets the dictionary containing the errors.
     /// </summary>
-    public IDictionary<string, string[]> Errors { get; }
+    public IDictionary<string, string[]> Errors { get; } = failures
+            .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
+            .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
 }

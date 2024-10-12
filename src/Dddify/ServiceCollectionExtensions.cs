@@ -1,11 +1,9 @@
-﻿using Dddify.EntityFrameworkCore;
-using Dddify.Guids;
+﻿using Dddify.Guids;
 using Dddify.Identity;
 using Dddify.Messaging.Behaviours;
 using Dddify.Timing;
 using FluentValidation;
 using Mapster;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 
@@ -17,11 +15,10 @@ public static class ServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        var builder = new DddifyOptionsBuilder();
+        var optionsBuilder = new DddifyOptionsBuilder();
 
-        optionsAction?.Invoke(builder);
-
-        var options = builder.Build();
+        optionsAction?.Invoke(optionsBuilder);
+        var options = optionsBuilder.Options;
 
         var assemblies = DependencyContext.Default.GetProjectAndDddifyAssemblies();
 
@@ -31,16 +28,24 @@ public static class ServiceCollectionExtensions
         {
             cfg.RegisterServicesFromAssemblies(assemblies);
 
-            cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
-            cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+            options.MediatrOptions?.Invoke(cfg);
 
-            options.OpenBehaviors.ForEach(behavior => cfg.AddOpenBehavior(behavior));
+            if (options.ValidationBehaviourEnabled)
+                cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+
+            if (options.UnitOfWorkBehaviorEnabled)
+                cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
         });
 
-        services.Scan(scan => scan.FromAssemblies(assemblies)
-            .RegisterAttributeDependencies()
-            .RegisterDomainServices()
-            .RegisterRepositories());
+        services.Scan(cfg =>
+        {
+            cfg.FromAssemblies(assemblies)
+                .RegisterAttributeDependencies()
+                .RegisterDomainServices()
+                .RegisterRepositories();
+
+            options.ScrutorOptions?.Invoke(cfg);
+        });
 
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(assemblies);

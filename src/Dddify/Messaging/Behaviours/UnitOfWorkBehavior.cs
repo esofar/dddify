@@ -9,23 +9,26 @@ public class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork)
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (unitOfWork.CurrentTransaction != null)
+        if (unitOfWork.CurrentTransaction is null)
         {
+            await using var transaction = unitOfWork.BeginTransaction();
+
             try
             {
                 var response = await next();
 
                 await unitOfWork.SaveChangesAsync(cancellationToken);
 
+                await unitOfWork.CommitAsync(cancellationToken);
+
                 return response;
             }
             catch
             {
+                await unitOfWork.RollbackAsync(cancellationToken);
                 throw;
             }
         }
-
-        await using var transaction = unitOfWork.BeginTransaction();
 
         try
         {
@@ -33,13 +36,10 @@ public class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork)
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            await unitOfWork.CommitAsync(cancellationToken);
-
             return response;
         }
         catch
         {
-            await unitOfWork.RollbackAsync(cancellationToken);
             throw;
         }
     }

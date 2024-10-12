@@ -47,12 +47,12 @@ namespace Dddify.EntityFrameworkCore
                 {
                     case EntityState.Added:
                         TrySetGuidId(entry);
-                        TrySetCreationAuditProperties(entry);
+                        TrySetCreationProperties(entry);
                         TrySetConcurrencyStampIfNull(entry);
                         break;
 
                     case EntityState.Modified:
-                        TrySetModificationAuditProperties(entry);
+                        TrySetModificationProperties(entry);
                         TryUpdateConcurrencyStamp(context, entry);
                         break;
 
@@ -84,7 +84,7 @@ namespace Dddify.EntityFrameworkCore
             }
         }
 
-        protected void TrySetCreationAuditProperties(EntityEntry entry)
+        protected void TrySetCreationProperties(EntityEntry entry)
         {
             if (entry.Entity is ICreationAuditable entity)
             {
@@ -93,7 +93,7 @@ namespace Dddify.EntityFrameworkCore
             }
         }
 
-        protected void TrySetModificationAuditProperties(EntityEntry entry)
+        protected void TrySetModificationProperties(EntityEntry entry)
         {
             if (entry.Entity is IModificationAuditable entity)
             {
@@ -138,7 +138,7 @@ namespace Dddify.EntityFrameworkCore
 
         protected void TrySetGuidId(EntityEntry entry)
         {
-            if (entry.Entity is IEntity<Guid> entity && entity.Id == default)
+            if (entry.Entity is IHasKey<Guid> entity && entity.Id == default)
             {
                 entity.Id = guidGenerator.Create();
             }

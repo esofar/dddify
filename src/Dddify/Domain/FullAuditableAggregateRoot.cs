@@ -1,7 +1,7 @@
 ﻿namespace Dddify.Domain;
 
 /// <summary>
-/// Represents a fully auditable aggregate.
+/// Represents a fully auditable aggregate that tracks creation, modification, and soft-deletion information. 
 /// </summary>
 /// <remarks>
 /// This class inherits from <see cref="AggregateRoot{TKey}"/> and implements <see cref="IFullAuditable"/> to provide audit properties for the aggregate.

@@ -16,10 +16,6 @@ public interface IEntity
 /// Represents an entity with a single primary key with "Id" property.
 /// </summary>
 /// <typeparam name="TKey">Type of the primary key.</typeparam>
-public interface IEntity<TKey> : IEntity
+public interface IEntity<TKey> : IEntity, IHasKey<TKey>
 {
-    /// <summary>
-    /// Unique identifier for this entity.
-    /// </summary>
-    TKey Id { get; set; }
 }

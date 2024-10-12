@@ -4,11 +4,12 @@ using System.Linq.Expressions;
 
 namespace Dddify.EntityFrameworkCore;
 
-public abstract class Repository<TDbContext, TEntity>(TDbContext context) : IRepository<TEntity>
+public abstract class Repository<TDbContext, TEntity, Tkey>(TDbContext context) : IRepository<TEntity, Tkey>
     where TDbContext : DbContext
     where TEntity : Entity, IAggregateRoot
+    where Tkey : IComparable<Tkey>
 {
-    public IQueryable<TEntity> Queryable() => context.Set<TEntity>();
+    public IQueryable<TEntity> AsQueryable() => context.Set<TEntity>();
 
     public IQueryable<TEntity> AsNoTrackingQueryable() => context.Set<TEntity>().AsNoTracking();
 
@@ -17,7 +18,7 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext context) : IRep
         return await context.Set<TEntity>().ToListAsync(cancellationToken);
     }
 
-    public async virtual Task<TEntity?> GetAsync(Guid id, CancellationToken cancellationToken = default)
+    public async virtual Task<TEntity?> GetAsync(Tkey id, CancellationToken cancellationToken = default)
     {
         return await context.FindAsync<TEntity>([id], cancellationToken);
     }

@@ -1,7 +1,7 @@
 ﻿namespace Dddify.Domain;
 
 /// <summary>
-/// Represents an interface for entities that support soft deletion.
+/// Represents an interface for entities that support soft-deletion.
 /// Soft deletion allows entities to be marked as deleted without being removed from the database, enabling recovery and auditing of deleted entities.
 /// </summary>
 public interface ISoftDeletable

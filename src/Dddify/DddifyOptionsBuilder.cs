@@ -1,19 +1,31 @@
 ﻿using Dddify.AspNetCore.Results;
 using Dddify.Guids;
 using Dddify.Localization;
-using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Scrutor;
 
 namespace Dddify;
 
+public static class DddifyOptionsBuilderExts
+{
+    public static DddifyOptionsBuilder WithDateTimeKind1(this DddifyOptionsBuilder builder, DateTimeKind dateTimeKind)
+    {
+        builder.Options.DateTimeKind = dateTimeKind;
+        return builder;
+    }
+}
+
 public class DddifyOptionsBuilder
 {
-    protected readonly DddifyOptions _options;
+    protected DddifyOptions _options;
 
     public DddifyOptionsBuilder()
     {
         _options = new DddifyOptions();
     }
+
+    public DddifyOptions Options => _options;
 
     /// <summary>
     /// Sets the <see cref="DateTimeKind"/> for date and time values.
@@ -37,15 +49,25 @@ public class DddifyOptionsBuilder
         return this;
     }
 
+    public DddifyOptionsBuilder EnableUnitOfWorkBehavior(bool enabled = true)
+    {
+        _options.UnitOfWorkBehaviorEnabled = enabled;
+        return this;
+    }
+
+    public DddifyOptionsBuilder EnableValidationBehaviour(bool enabled = true)
+    {
+        _options.ValidationBehaviourEnabled = enabled;
+        return this;
+    }
+
     /// <summary>
     /// Adds the JSON localization extension.
     /// </summary>
     /// <param name="configure">An optional action to configure the JSON localization options.</param>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
     public DddifyOptionsBuilder UseJsonLocalization(Action<JsonLocalizationOptions>? configure = null)
-    {
-        return WithExtension(new JsonLocalizationOptionsExtension(configure));
-    }
+        => WithExtension(new JsonLocalizationOptionsExtension(configure));
 
     /// <summary>
     /// Adds the JSON localization extension using the specified configuration section path.
@@ -54,9 +76,7 @@ public class DddifyOptionsBuilder
     /// <param name="configure">An optional action to configure the JSON localization options.</param>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
     public DddifyOptionsBuilder UseJsonLocalization(string configSectionPath, Action<JsonLocalizationOptions>? configure = null)
-    {
-        return WithExtension(new JsonLocalizationOptionsExtension(configSectionPath, configure));
-    }
+       => WithExtension(new JsonLocalizationOptionsExtension(configSectionPath, configure));
 
     /// <summary>
     /// Adds the API result wrapper extension.
@@ -64,9 +84,28 @@ public class DddifyOptionsBuilder
     /// <param name="configure">An optional action to configure the API result wrapper options.</param>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
     public DddifyOptionsBuilder UseApiResultWrapper(Action<ApiResultWrapperOptions>? configure = null)
-    {
-        return WithExtension(new ApiResultWrapperOptionsExtension(configure));
-    }
+        => WithExtension(new ApiResultWrapperOptionsExtension(configure));
+
+    /// <summary>
+    /// Registers the given context.
+    /// </summary>
+    /// <typeparam name="TContextService">The class or interface that will be used to resolve the context from the container.</typeparam>
+    /// <typeparam name="TContextImplementation">The concrete implementation type to create.</typeparam>
+    /// <param name="optionsAction">An optional action to configure the <see cref="DbContextOptions" /> for the context.</param>
+    /// <returns></returns>
+    public DddifyOptionsBuilder AddDbContext<TContextService, TContextImplementation>(
+        Action<DbContextOptionsBuilder>? optionsAction = null) where TContextImplementation : DbContext, TContextService
+        => WithExtension(new DbContextOptionsExtension<TContextService, TContextImplementation>(optionsAction));
+
+    /// <summary>
+    /// Registers the given context.
+    /// </summary>
+    /// <typeparam name="TContext">The type of context to be registered.</typeparam>
+    /// <param name="optionsAction">An optional action to configure the <see cref="DbContextOptions" /> for the context.</param>
+    /// <returns></returns>
+    public DddifyOptionsBuilder AddDbContext<TContext>(
+        Action<DbContextOptionsBuilder>? optionsAction = null) where TContext : DbContext
+        => AddDbContext<TContext, TContext>(optionsAction);
 
     /// <summary>
     /// Adds or updates the specified <see cref="IOptionsExtension"/> to the options.
@@ -77,24 +116,19 @@ public class DddifyOptionsBuilder
     private DddifyOptionsBuilder WithExtension<TExtension>(TExtension extension)
         where TExtension : IOptionsExtension
     {
-        _options.AddOrUpdateExtension(extension);
+        Options.AddOrUpdateExtension(extension);
         return this;
     }
 
-    /// <summary>
-    /// Adds custom <see cref="IPipelineBehavior{TRequest, TResponse}"/> to the options.
-    /// </summary>
-    /// <param name="behaviors">The behaviors to be added.</param>
-    /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
-    public DddifyOptionsBuilder AddBehaviors(params Type[] behaviors)
+    public DddifyOptionsBuilder ConfigureMediatR(Action<MediatRServiceConfiguration> configure)
     {
-        _options.OpenBehaviors.AddRange(behaviors);
+        _options.MediatrOptions = configure;
         return this;
     }
 
-    public DddifyOptions Build()
+    public DddifyOptionsBuilder ConfigureScrutor(Action<ITypeSourceSelector> configure)
     {
-        return _options;
+        _options.ScrutorOptions = configure;
+        return this;
     }
-
 }
