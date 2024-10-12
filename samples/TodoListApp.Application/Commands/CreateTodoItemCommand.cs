@@ -1,7 +1,4 @@
-﻿using Dddify.Messaging.Commands;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using TodoListApp.Domain.Entities;
+﻿using TodoListApp.Domain.Entities;
 using TodoListApp.Domain.Enums;
 using TodoListApp.Domain.Exceptions;
 using TodoListApp.Domain.Repositories;
@@ -19,7 +16,7 @@ public class CreateTodoItemCommandValidator : AbstractValidator<CreateTodoItemCo
     }
 }
 
-public class CreateTodoItemCommandHandler(ITodoItemRepository todoItemRepository ) : ICommandHandler<CreateTodoItemCommand>
+public class CreateTodoItemCommandHandler(ITodoItemRepository todoItemRepository) : ICommandHandler<CreateTodoItemCommand>
 {
     public async Task Handle(CreateTodoItemCommand command, CancellationToken cancellationToken)
     {
@@ -29,7 +26,7 @@ public class CreateTodoItemCommandHandler(ITodoItemRepository todoItemRepository
         }
 
         var todoItem = new TodoItem(
-            command.Text, 
+            command.Text,
             command.PriorityLevel.ToEnum<PriorityLevel>());
 
         await todoItemRepository.AddAsync(todoItem, cancellationToken);

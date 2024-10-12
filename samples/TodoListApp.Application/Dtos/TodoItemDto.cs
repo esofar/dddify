@@ -1,5 +1,4 @@
-﻿using Mapster;
-using TodoListApp.Domain.Entities;
+﻿using TodoListApp.Domain.Entities;
 
 namespace TodoListApp.Application.Dtos;
 

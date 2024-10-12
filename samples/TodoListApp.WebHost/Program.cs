@@ -1,11 +1,6 @@
 using Dddify;
-using Dddify.Domain;
-using Dddify.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using TodoListApp.Domain.Repositories;
-using TodoListApp.Infrastructure.Repositories;
+using TodoListApp.Infrastructure.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,16 +11,13 @@ builder.Services.AddControllers();
 builder.Services.AddDddify(cfg =>
 {
     cfg.UseJsonLocalization();
+
     cfg.UseApiResultWrapper();
+
+    cfg.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("Default"))
+            .EnableSensitiveDataLogging());
 });
-
-builder.Services.AddScoped<IInterceptor, InternalInterceptor>();
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
-
-builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("Default"))
-    .EnableSensitiveDataLogging());
 
 var app = builder.Build();
 

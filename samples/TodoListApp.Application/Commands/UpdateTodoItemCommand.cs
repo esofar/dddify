@@ -1,7 +1,4 @@
-﻿using Dddify.Messaging.Commands;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using TodoListApp.Domain.Exceptions;
+﻿using TodoListApp.Domain.Exceptions;
 using TodoListApp.Domain.Repositories;
 
 namespace TodoListApp.Application.Commands;
@@ -16,19 +13,17 @@ public class UpdateTodoItemCommandValidator : AbstractValidator<UpdateTodoItemCo
     }
 }
 
-public class UpdateTodoItemCommandHandler(IApplicationDbContext context) : ICommandHandler<UpdateTodoItemCommand>
+public class UpdateTodoItemCommandHandler(ITodoItemRepository todoItemRepository) : ICommandHandler<UpdateTodoItemCommand>
 {
     public async Task Handle(UpdateTodoItemCommand command, CancellationToken cancellationToken)
     {
-        var todoItem = await context.TodoItems.FirstOrDefaultAsync(c => c.Id == command.Id, cancellationToken);
+        var todoItem = await todoItemRepository.GetAsync(command.Id, cancellationToken);
 
         if (todoItem is null)
         {
             throw new TodoItemNotFoundException(command.Id);
         }
 
-        todoItem.Complete(command.IsDone);
-
-        await context.SaveChangesAsync(cancellationToken);
+        todoItem.MarkAs(command.IsDone);
     }
 }

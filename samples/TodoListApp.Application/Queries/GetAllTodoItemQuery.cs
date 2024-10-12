@@ -1,7 +1,4 @@
-﻿using Dddify.Messaging.Queries;
-using Mapster;
-using Microsoft.EntityFrameworkCore;
-using TodoListApp.Application.Dtos;
+﻿using TodoListApp.Application.Dtos;
 using TodoListApp.Domain.Repositories;
 
 namespace TodoListApp.Application.Queries;
@@ -13,8 +10,10 @@ public class GetAllTodoItemQueryHandler(ITodoItemRepository todoItemRepository) 
     public async Task<IEnumerable<TodoItemDto>> Handle(GetAllTodoItemQuery query, CancellationToken cancellationToken)
     {
         return await todoItemRepository
-            .AsNoTrackingQueryable()
-            .OrderBy(x => x.CreatedAt)
+            .AsQueryable()
+            .AsNoTracking()
+            .OrderBy(c => c.IsDone)
+            .ThenBy(c => c.CreatedAt)
             .ProjectToType<TodoItemDto>()
             .ToListAsync(cancellationToken);
     }
