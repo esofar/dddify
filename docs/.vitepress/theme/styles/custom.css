@@ -1,0 +1,42 @@
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #2b1635, #41d1ff);
+}
+
+.image-src {
+  max-width: 420px !important;
+  top: 55% !important;
+  left: 65% !important;
+}
+
+.tagline {
+  color: #000;
+}
+
+.dark .tagline {
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-alt);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--vp-c-bg);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--vp-c-bg-elv);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vp-c-bg) var(--vp-c-bg-alt);
+}
