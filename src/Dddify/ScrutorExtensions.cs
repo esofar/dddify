@@ -8,9 +8,8 @@ namespace Dddify;
 
 public static class ScrutorExtensions
 {
-    public static IImplementationTypeSelector WithLifetime(
-        this ILifetimeSelector lifetimeSelector,
-        ServiceLifetime lifetime) => lifetime switch
+    public static IImplementationTypeSelector WithLifetime(this ILifetimeSelector lifetimeSelector, ServiceLifetime lifetime)
+        => lifetime switch
         {
             ServiceLifetime.Singleton => lifetimeSelector.WithSingletonLifetime(),
             ServiceLifetime.Scoped => lifetimeSelector.WithScopedLifetime(),
@@ -18,15 +17,13 @@ public static class ScrutorExtensions
             _ => throw new ArgumentOutOfRangeException($"Unsupported lifetime: {lifetime}")
         };
 
-    public static IImplementationTypeSelector Register(
-        this IServiceTypeSelector serviceTypeSelector,
-        RegistrationType registrationType,
-        ServiceLifetime lifetime) => registrationType switch
+    public static IImplementationTypeSelector Register(this IServiceTypeSelector serviceTypeSelector, RegistrationType registrationType, ServiceLifetime lifetime)
+        => registrationType switch
         {
             RegistrationType.AsSelf => WithLifetime(serviceTypeSelector.AsSelf(), lifetime),
             RegistrationType.AsMatchingInterface => WithLifetime(serviceTypeSelector.AsMatchingInterface(), lifetime),
             RegistrationType.AsImplementedInterfaces => WithLifetime(serviceTypeSelector.AsImplementedInterfaces(), lifetime),
-            _ => throw new ArgumentOutOfRangeException($"Unsupported registrationType: {registrationType}")
+            _ => throw new ArgumentOutOfRangeException($"Unsupported registration type: {registrationType}")
         };
 
     public static IImplementationTypeSelector RegisterDomainServices(this IImplementationTypeSelector selector)
@@ -45,7 +42,7 @@ public static class ScrutorExtensions
 
     public static IImplementationTypeSelector RegisterAttributeDependencies(this IImplementationTypeSelector selector)
     {
-        var registrationTypes = Enum.GetValues(typeof(RegistrationType)).Cast<RegistrationType>();
+        var registrationTypes = Enum.GetValues<RegistrationType>().Cast<RegistrationType>();
 
         var attributeLifetimes = new Dictionary<Type, ServiceLifetime>
         {
@@ -58,7 +55,8 @@ public static class ScrutorExtensions
         {
             foreach (var attributeLifetime in attributeLifetimes)
             {
-                selector.AddClasses(cls => cls.Where(type => type.GetCustomAttribute(attributeLifetime.Key) is DependencyAttribute attribute && attribute.RegistrationType == registrationType))
+                selector
+                    .AddClasses(cls => cls.Where(type => type.GetCustomAttribute(attributeLifetime.Key) is DependencyAttribute attribute && attribute.RegistrationType == registrationType))
                     .Register(registrationType, attributeLifetime.Value);
             }
         }

@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
@@ -15,8 +15,8 @@
 		<RepositoryUrl>https://github.com/esofar/dddify</RepositoryUrl>
 		<Copyright></Copyright>
 		<RepositoryType>git</RepositoryType>
-		<PackageTags>dddify;cqrs;aspnetcore;domain-driven design;clean-architecture</PackageTags>
-		<Description>A lightweight framework that practices Domain-Driven Design approach for building modern applications on ASP.NET Core.</Description>
+		<PackageTags>ddd;cqrs;clean-architecture;efcore;aspnetcore</PackageTags>
+		<Description>A lightweight framework that practices Domain-Driven Design for building modern applications on ASP.NET Core.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,13 +24,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.1.35" />
 		<PackageReference Include="Mapster" Version="7.4.0" />
-		<PackageReference Include="Scrutor" Version="5.0.1" />
+		<PackageReference Include="Scrutor" Version="5.1.0" />
 		<PackageReference Include="MediatR" Version="12.4.1" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 	</ItemGroup>
 
 </Project>

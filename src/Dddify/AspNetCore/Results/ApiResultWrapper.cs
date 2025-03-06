@@ -3,18 +3,13 @@ using Microsoft.Extensions.Options;
 
 namespace Dddify.AspNetCore.Results;
 
-public class ApiResultWrapper : IApiResultWrapper
+public class ApiResultWrapper(
+    IOptions<ApiResultWrapperOptions> options,
+    IHttpContextAccessor httpContextAccessor) : IApiResultWrapper
 {
-    private readonly ApiResultWrapperOptions _options;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ApiResultWrapperOptions _options = options.Value;
 
-    public ApiResultWrapper(IOptions<ApiResultWrapperOptions> options, IHttpContextAccessor httpContextAccessor)
-    {
-        _options = options.Value;
-        _httpContextAccessor = httpContextAccessor;
-    }
-
-    public string? TraceId => _options.EnableTraceIdentifier ? _httpContextAccessor.HttpContext?.TraceIdentifier : null;
+    public string? TraceId => _options.EnableTraceIdentifier ? httpContextAccessor.HttpContext?.TraceIdentifier : null;
 
     public IApiResult Succeed() => new ApiResult
     {

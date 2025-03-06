@@ -1,14 +1,20 @@
 ﻿using Dddify.Exceptions;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Dddify.Messaging.Behaviours;
 
-public class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) 
-    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+public class ValidationBehaviour<TRequest, TResponse>(
+    IEnumerable<IValidator<TRequest>> validators,
+    ILogger<ValidationBehaviour<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
+        var typeName = typeof(TRequest).GetGenericTypeName();
+
+        logger.LogInformation("Validating Request {RequestType}.", typeName);
+
         if (validators.Any())
         {
             var context = new ValidationContext<TRequest>(request);
@@ -22,6 +28,8 @@ public class ValidationBehaviour<TRequest, TResponse>(IEnumerable<IValidator<TRe
 
             if (failures.Count > 0)
             {
+                logger.LogWarning("Validation Errors for {RequestType}. Errors: {@ValidationErrors}", typeName, failures);
+
                 throw new BadRequestException(failures);
             }
         }

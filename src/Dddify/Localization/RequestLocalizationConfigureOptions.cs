@@ -3,18 +3,13 @@ using Microsoft.Extensions.Options;
 
 namespace Dddify.Localization;
 
-internal class RequestLocalizationConfigureOptions : IConfigureOptions<RequestLocalizationOptions>
+public class RequestLocalizationConfigureOptions(IOptions<JsonLocalizationOptions> options) : IConfigureOptions<RequestLocalizationOptions>
 {
-    private readonly JsonLocalizationOptions _options;
-
-    public RequestLocalizationConfigureOptions(IOptions<JsonLocalizationOptions> options)
-    {
-        _options = options.Value;
-    }
+    private readonly JsonLocalizationOptions _options = options.Value;
 
     public void Configure(RequestLocalizationOptions options)
     {
-        if (_options.SupportedCultures.Any())
+        if (_options.SupportedCultures.Length != 0)
         {
             options.AddSupportedCultures(_options.SupportedCultures)
                 .AddSupportedUICultures(_options.SupportedCultures)

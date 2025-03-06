@@ -18,6 +18,12 @@ public class SequentialGuidGenerator : IGuidGenerator
         _sequentialGuidType = sequentialGuidType;
     }
 
+#if NET9_0
+    public Guid Create()
+    {
+        return Guid.CreateVersion7();
+    }
+#else
     public Guid Create()
     {
         // We start with 16 bytes of cryptographically strong random data.
@@ -90,4 +96,5 @@ public class SequentialGuidGenerator : IGuidGenerator
 
         return new Guid(guidBytes);
     }
+#endif
 }

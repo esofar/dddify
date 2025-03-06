@@ -4,54 +4,51 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Dddify.EntityFrameworkCore;
 
-public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
-    where TDbContext : DbContext
+public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork where TDbContext : DbContext
 {
-    private IDbContextTransaction? _currentTransaction;
+    private IDbContextTransaction? _transaction;
 
-    public IDbContextTransaction? CurrentTransaction => _currentTransaction;
+    public bool HasActiveTransaction => _transaction is not null;
 
-    public IDbContextTransaction BeginTransaction()
+    public async Task<IDbContextTransaction> BeginAsync(CancellationToken cancellationToken = default)
     {
-        _currentTransaction = context.Database.BeginTransaction();
-        return _currentTransaction;
+        return _transaction = await context.Database.BeginTransactionAsync(cancellationToken);
     }
 
     public async Task CommitAsync(CancellationToken cancellationToken = default)
     {
-        if (_currentTransaction != null)
-        {
-            await _currentTransaction.CommitAsync(cancellationToken);
-            _currentTransaction.Dispose();
-            _currentTransaction = null;
-        }
+        ArgumentNullException.ThrowIfNull(_transaction);
+
+        await _transaction.CommitAsync(cancellationToken);
+        _transaction.Dispose();
+        _transaction = null;
     }
 
     public async Task RollbackAsync(CancellationToken cancellationToken = default)
     {
-        if (_currentTransaction != null)
-        {
-            await _currentTransaction.RollbackAsync(cancellationToken);
-            _currentTransaction.Dispose();
-            _currentTransaction = null;
-        }
+        ArgumentNullException.ThrowIfNull(_transaction);
+
+        await _transaction.RollbackAsync(cancellationToken);
+        _transaction.Dispose();
+        _transaction = null;
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        if (_currentTransaction == null)
+        if (HasActiveTransaction)
         {
-            _currentTransaction = BeginTransaction();
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        else
+        {
+            _transaction = await BeginAsync(cancellationToken);
 
-            await using (_currentTransaction)
+            await using (_transaction)
             {
                 try
                 {
-                    var rows = await context.SaveChangesAsync(cancellationToken);
-
+                    await context.SaveChangesAsync(cancellationToken);
                     await CommitAsync(cancellationToken);
-
-                    return rows;
                 }
                 catch
                 {
@@ -59,10 +56,6 @@ public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
                     throw;
                 }
             }
-        }
-        else
-        {
-            return await context.SaveChangesAsync(cancellationToken);
         }
     }
 }

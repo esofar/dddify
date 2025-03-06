@@ -14,10 +14,7 @@ public class ApiExceptionFilter : IAsyncExceptionFilter
     private readonly IStringLocalizerFactory _localizerFactory;
     private readonly Dictionary<Type, Func<ExceptionContext, ObjectResult>> _exceptionHandlers;
 
-    public ApiExceptionFilter(
-        ILogger<ApiExceptionFilter> logger,
-        IApiResultWrapper apiResultWrapper,
-        IStringLocalizerFactory localizerFactory)
+    public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger, IApiResultWrapper apiResultWrapper, IStringLocalizerFactory localizerFactory)
     {
         _logger = logger;
         _apiResultWrapper = apiResultWrapper;
@@ -34,20 +31,18 @@ public class ApiExceptionFilter : IAsyncExceptionFilter
 
     public Task OnExceptionAsync(ExceptionContext context)
     {
-        if (context.Exception is BussinessException exception)
+        if (context.Exception is KnownException exception)
         {
-            _logger.Log(exception.LogLevel, exception, exception.Message);
+            _logger.Log(exception.LogLevel, exception, "A known (application or domain) exception occurred.");
 
-            context.Result = HandleBussinessException(exception);
+            context.Result = HandleKnownException(exception);
         }
         else
         {
-            _logger.LogError(context.Exception, context.Exception.Message);
+            _logger.LogError(context.Exception, "A unknown exception occurred.");
 
-            var type = context.Exception.GetType();
-
-            context.Result = _exceptionHandlers.ContainsKey(type)
-                ? _exceptionHandlers[type].Invoke(context)
+            context.Result = _exceptionHandlers.TryGetValue(context.Exception.GetType(), out Func<ExceptionContext, ObjectResult>? handler)
+                ? handler.Invoke(context)
                 : HandleUnknownException();
         }
 
@@ -56,22 +51,23 @@ public class ApiExceptionFilter : IAsyncExceptionFilter
         return Task.CompletedTask;
     }
 
-    private ObjectResult HandleBussinessException(BussinessException exception)
+    private ObjectResult HandleKnownException(KnownException exception)
     {
         var localizer = _localizerFactory.Create(exception.ResourceType);
 
-        var apiResult = string.IsNullOrEmpty(exception.Name)
+        var apiResult = string.IsNullOrEmpty(exception.LocalizedName)
             ? _apiResultWrapper.Failed()
             : _apiResultWrapper.Failed(exception.Arguments.Length != 0
-                ? localizer[exception.Name, exception.Arguments] 
-                : localizer[exception.Name]);
-        
+                ? localizer[exception.LocalizedName, exception.Arguments]
+                : localizer[exception.LocalizedName]);
+
         return new ObjectResult(apiResult);
     }
 
     private ObjectResult HandleBadRequestException(ExceptionContext context)
     {
         var exception = context.Exception as BadRequestException;
+
         var apiResult = _apiResultWrapper.Failed(exception!.Errors);
 
         return new BadRequestObjectResult(apiResult);

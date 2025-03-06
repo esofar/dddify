@@ -1,6 +1,7 @@
 ﻿using Dddify;
 using Dddify.Domain;
 using Dddify.EntityFrameworkCore;
+using Dddify.EntityFrameworkCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -11,8 +12,8 @@ public class DbContextOptionsExtension<TContextService, TContextImplementation>(
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddScoped<IInterceptor, InternalInterceptor>();
-
+        services.AddScoped<IInterceptor, SaveEntityPropertiesInterceptor>();
+        services.AddScoped<IInterceptor, DispatchDomainEventsInterceptor>();
         services.AddScoped<IUnitOfWork, UnitOfWork<TContextImplementation>>();
 
         services.AddDbContext<TContextService, TContextImplementation>((provider, optionsBuilder) =>

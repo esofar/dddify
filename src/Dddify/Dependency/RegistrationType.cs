@@ -12,8 +12,10 @@ public enum RegistrationType
 
     /// <summary>
     /// Registers the specified service with the first found matching interface name.
-    /// (e.g. ClassName is matched to IClassName)
     /// </summary>
+    /// <remarks>
+    /// (e.g. ClassName is matched to IClassName)
+    /// </remarks>
     AsMatchingInterface,
 
     /// <summary>

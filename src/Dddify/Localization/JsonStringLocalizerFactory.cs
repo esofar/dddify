@@ -44,8 +44,8 @@ public class JsonStringLocalizerFactory : IStringLocalizerFactory
 
     public IStringLocalizer Create(string baseName, string location)
     {
-        ArgumentNullException.ThrowIfNull(nameof(baseName));
-        ArgumentNullException.ThrowIfNull(nameof(location));
+        ArgumentNullException.ThrowIfNull(baseName);
+        ArgumentNullException.ThrowIfNull(location);
 
         return _localizerCache.GetOrAdd($"B={baseName},L={location}", _ =>
         {

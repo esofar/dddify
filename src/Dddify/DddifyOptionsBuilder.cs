@@ -1,20 +1,12 @@
 ﻿using Dddify.AspNetCore.Results;
 using Dddify.Guids;
 using Dddify.Localization;
+using Dddify.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Scrutor;
 
 namespace Dddify;
-
-public static class DddifyOptionsBuilderExts
-{
-    public static DddifyOptionsBuilder WithDateTimeKind1(this DddifyOptionsBuilder builder, DateTimeKind dateTimeKind)
-    {
-        builder.Options.DateTimeKind = dateTimeKind;
-        return builder;
-    }
-}
 
 public class DddifyOptionsBuilder
 {
@@ -55,6 +47,11 @@ public class DddifyOptionsBuilder
         return this;
     }
 
+    /// <summary>
+    /// Enables or disables the validation behavior.
+    /// </summary>
+    /// <param name="enabled">A boolean value indicating whether the validation behavior should be enabled.</param>
+    /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
     public DddifyOptionsBuilder EnableValidationBehaviour(bool enabled = true)
     {
         _options.ValidationBehaviourEnabled = enabled;
@@ -62,21 +59,43 @@ public class DddifyOptionsBuilder
     }
 
     /// <summary>
-    /// Adds the JSON localization extension.
+    /// Adds the current user service.
     /// </summary>
-    /// <param name="configure">An optional action to configure the JSON localization options.</param>
+    /// <typeparam name="TCurrentUserImplementation">The type of the current user service.</typeparam>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
-    public DddifyOptionsBuilder UseJsonLocalization(Action<JsonLocalizationOptions>? configure = null)
-        => WithExtension(new JsonLocalizationOptionsExtension(configure));
+    public DddifyOptionsBuilder AddCurrentUser<TCurrentUserImplementation>()
+        where TCurrentUserImplementation : class, ICurrentUser
+        => WithExtension(new CurrentUserOptionsExtension<TCurrentUserImplementation>());
 
     /// <summary>
-    /// Adds the JSON localization extension using the specified configuration section path.
+    /// Adds the current user service with extended user service and implementation.
+    /// </summary>
+    /// <typeparam name="TCurrentUserImplementation">The type of the current user service implementation.</typeparam>
+    /// <typeparam name="TExtendedCurrentUserService">The type of the extended current user service.</typeparam>
+    /// <typeparam name="TExtendedCurrentUserImplementation">The type of the extended current user service implementation.</typeparam>
+    /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
+    public DddifyOptionsBuilder AddCurrentUser<TCurrentUserImplementation, TExtendedCurrentUserService, TExtendedCurrentUserImplementation>()
+       where TCurrentUserImplementation : class, ICurrentUser
+       where TExtendedCurrentUserService : class, ICurrentUser
+       where TExtendedCurrentUserImplementation : class, ICurrentUser, TExtendedCurrentUserService
+       => WithExtension(new CurrentUserOptionsExtension<TCurrentUserImplementation>(typeof(TExtendedCurrentUserService), typeof(TExtendedCurrentUserImplementation)));
+
+    /// <summary>
+    /// Adds the JSON localization using the specified configuration section path.
     /// </summary>
     /// <param name="configSectionPath">The configuration section path for JSON localization.</param>
     /// <param name="configure">An optional action to configure the JSON localization options.</param>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
     public DddifyOptionsBuilder UseJsonLocalization(string configSectionPath, Action<JsonLocalizationOptions>? configure = null)
        => WithExtension(new JsonLocalizationOptionsExtension(configSectionPath, configure));
+
+    /// <summary>
+    /// Adds the JSON localization using `JsonLocalization` configuration section path.
+    /// </summary>
+    /// <param name="configure">An optional action to configure the JSON localization options.</param>
+    /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
+    public DddifyOptionsBuilder UseJsonLocalization(Action<JsonLocalizationOptions>? configure = null)
+        => UseJsonLocalization("JsonLocalization", configure);
 
     /// <summary>
     /// Adds the API result wrapper extension.
@@ -93,8 +112,8 @@ public class DddifyOptionsBuilder
     /// <typeparam name="TContextImplementation">The concrete implementation type to create.</typeparam>
     /// <param name="optionsAction">An optional action to configure the <see cref="DbContextOptions" /> for the context.</param>
     /// <returns></returns>
-    public DddifyOptionsBuilder AddDbContext<TContextService, TContextImplementation>(
-        Action<DbContextOptionsBuilder>? optionsAction = null) where TContextImplementation : DbContext, TContextService
+    public DddifyOptionsBuilder AddDbContext<TContextService, TContextImplementation>(Action<DbContextOptionsBuilder>? optionsAction = null)
+        where TContextImplementation : DbContext, TContextService
         => WithExtension(new DbContextOptionsExtension<TContextService, TContextImplementation>(optionsAction));
 
     /// <summary>
@@ -103,32 +122,36 @@ public class DddifyOptionsBuilder
     /// <typeparam name="TContext">The type of context to be registered.</typeparam>
     /// <param name="optionsAction">An optional action to configure the <see cref="DbContextOptions" /> for the context.</param>
     /// <returns></returns>
-    public DddifyOptionsBuilder AddDbContext<TContext>(
-        Action<DbContextOptionsBuilder>? optionsAction = null) where TContext : DbContext
+    public DddifyOptionsBuilder AddDbContext<TContext>(Action<DbContextOptionsBuilder>? optionsAction = null)
+        where TContext : DbContext
         => AddDbContext<TContext, TContext>(optionsAction);
 
+    private DddifyOptionsBuilder WithExtension<T>(T extension)
+        where T : IOptionsExtension
+    {
+        _options.AddOrUpdateExtension(extension);
+        return this;
+    }
+
     /// <summary>
-    /// Adds or updates the specified <see cref="IOptionsExtension"/> to the options.
+    /// Configures MediatR services.
     /// </summary>
-    /// <typeparam name="TExtension">The type of extension to be added or updated.</typeparam>
-    /// <param name="extension">The extension to be added or updated.</param>
+    /// <param name="configure">An action to configure MediatR services.</param>
     /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
-    private DddifyOptionsBuilder WithExtension<TExtension>(TExtension extension)
-        where TExtension : IOptionsExtension
+    public DddifyOptionsBuilder CustomiseMediatR(Action<MediatRServiceConfiguration> configure)
     {
-        Options.AddOrUpdateExtension(extension);
+        _options.ConfigureMediatr = configure;
         return this;
     }
 
-    public DddifyOptionsBuilder ConfigureMediatR(Action<MediatRServiceConfiguration> configure)
+    /// <summary>
+    /// Scans the project assemblies and register services using Scrutor.
+    /// </summary>
+    /// <param name="configure">An action to configure the implementation type selector.</param>
+    /// <returns>The current instance of <see cref="DddifyOptionsBuilder"/>.</returns>
+    public DddifyOptionsBuilder ScanFromProjectAssemblies(Action<IImplementationTypeSelector> configure)
     {
-        _options.MediatrOptions = configure;
-        return this;
-    }
-
-    public DddifyOptionsBuilder ConfigureScrutor(Action<ITypeSourceSelector> configure)
-    {
-        _options.ScrutorOptions = configure;
+        _options.ConfigureScrutor = configure;
         return this;
     }
 }

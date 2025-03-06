@@ -1,9 +1,12 @@
 ﻿namespace Dddify.Exceptions;
 
 /// <summary>
-/// Represents a base class for domain-specific exceptions.
+/// Represents exceptions that occur within the domain layer, typically related to domain rules and invariants.
 /// </summary>
-public abstract class DomainException : BussinessException
+/// <remarks>
+/// This class inherits from <see cref="KnownException"/>.
+/// </remarks>
+public abstract class DomainException : KnownException
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DomainException"/> class with the specified error message.

@@ -17,16 +17,17 @@ $(function () {
         }, 2000);
     };
 
-    const fetchTodoItems = async () => {
+    const fetchTodos = async () => {
         $('#loading').removeClass('hidden');
         try {
-            const response = await fetch('/api/todo-items');
+            const response = await fetch('/api/todos');
             if (!response.ok) {
-                throw new Error('Failed to fetch todo items.');
+                throw new Error('Failed to fetch todos.');
             }
             const res = await response.json();
-            const todoItems = res.success ? res.data: [];
-            renderTodoItems(todoItems);
+            if (res.success) {
+                renderTodos(res.data);
+            }
         } catch (error) {
             showError(error.message);
         } finally {
@@ -34,51 +35,47 @@ $(function () {
         }
     };
 
-    const renderTodoItems = (todoItems) => {
+    const renderTodos = (todos) => {
         $('#todo-item-list').empty();
-        todoItems.forEach(todoItem => {
-            const todoItemElement = $(`
+        todos.forEach(todo => {
+            const todoElement = $(`
                 <li class="flex justify-between items-center mt-2 p-2 border rounded-lg">
                     <div class="flex items-center">
-                        <input type="checkbox" class="complete-todo-item mr-2 h-5 w-5 text-blue-600" data-id="${todoItem.id}" ${todoItem.isDone ? 'checked' : ''}>
-                        <span class="todo-item-text ${todoItem.isDone ? 'line-through' : ''}">${todoItem.text}</span>
-                        <span class="ml-2 text-sm text-gray-500">[${todoItem.priorityLevel}]</span>
+                        <input type="checkbox" class="complete-todo-item mr-2 h-5 w-5 text-blue-600" data-id="${todo.id}" ${todo.isDone ? 'checked' : ''}>
+                        <span class="todo-item-text ${todo.isDone ? 'line-through' : ''}">${todo.text}</span>
+                        <span class="ml-2 text-sm text-gray-500">[${todo.priority}]</span>
                     </div>
-                    <button class="delete-todo-item text-red-500" data-id="${todoItem.id}">Delete</button>
+                    <button class="delete-todo-item text-red-500" data-id="${todo.id}">Delete</button>
                 </li>
             `);
-            $('#todo-item-list').append(todoItemElement);
+            $('#todo-item-list').append(todoElement);
         });
     };
 
-    const addTodoItem = async () => {
-        const newTodoItemText = $('#new-todo-item-text').val().trim();
-        const newTodoItemPriority = $('#new-todo-item-priority').val();
-        //if (newTodoItemText === '') {
-        //    showError('Please enter text.');
-        //    return;
-        //}
-        if (newTodoItemText.length > 50) {
+    const addTodo = async () => {
+        const newTodoText = $('#new-todo-item-text').val().trim();
+        const newTodoPriority = $('#new-todo-item-priority').val();
+        if (newTodoText.length > 50) {
             showError('Character length should not exceed 50.');
             return;
         }
         try {
-            const response = await fetch('/api/todo-items', {
+            const response = await fetch('/api/todos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ text: newTodoItemText, priorityLevel: newTodoItemPriority })
+                body: JSON.stringify({ text: newTodoText, priority: newTodoPriority })
             });
             if (!response.ok) {
-                throw new Error('Failed to add todo item.');
+                throw new Error('Failed to add todo.');
             }
             const res = await response.json();
             if (res.success) {
-                fetchTodoItems();
+                fetchTodos();
                 showSuccess('Added Successfully.');
                 $('#new-todo-item-text').val('');
-                $('#new-todo-item-priority').val('low');
+                $('#new-todo-item-priority').val('0');
             } else {
                 showError(res.errorMessage);
             }
@@ -87,9 +84,9 @@ $(function () {
         }
     };
 
-    const updateTodoItem = async (todoItemId, isDone) => {
+    const updateTodo = async (todoId, isDone) => {
         try {
-            const response = await fetch(`/api/todo-items/${todoItemId}`, {
+            const response = await fetch(`/api/todos/${todoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -97,30 +94,30 @@ $(function () {
                 body: JSON.stringify({ isDone })
             });
             if (!response.ok) {
-                throw new Error('Failed to update todo item.');
+                throw new Error('Failed to update todo.');
             }
-            const todoItemText = $(`input[data-id="${todoItemId}"]`).siblings('.todo-item-text');
+            const todoText = $(`input[data-id="${todoId}"]`).siblings('.todo-item-text');
             if (isDone) {
-                todoItemText.addClass('line-through');
+                todoText.addClass('line-through');
             } else {
-                todoItemText.removeClass('line-through');
+                todoText.removeClass('line-through');
             }
         } catch (error) {
             showError(error.message);
         }
     };
 
-    const removeTodoItem = async (todoItemId) => {
+    const removeTodo = async (todoId) => {
         try {
-            const response = await fetch(`/api/todo-items/${todoItemId}`, {
+            const response = await fetch(`/api/todos/${todoId}`, {
                 method: 'DELETE'
             });
             if (!response.ok) {
-                throw new Error('Failed to delete todo item.');
+                throw new Error('Failed to delete todo.');
             }
             const res = await response.json();
             if (res.success) {
-                fetchTodoItems();
+                fetchTodos();
                 showSuccess('Deleted Successfully.');
             } else {
                 showError(res.errorMessage);
@@ -130,31 +127,31 @@ $(function () {
         }
     };
 
-    $('#add-todo-item').on('click', addTodoItem);
+    $('#add-todo-item').on('click', addTodo);
 
     $(document).on('change', '.complete-todo-item', function () {
-        const todoItemId = $(this).data('id');
+        const todoId = $(this).data('id');
         const isDone = $(this).is(':checked');
-        updateTodoItem(todoItemId, isDone);
+        updateTodo(todoId, isDone);
     });
 
     $(document).on('click', '.delete-todo-item', function () {
-        deleteTodoItemId = $(this).data('id');
+        deleteTodoId = $(this).data('id');
         $('#delete-confirmation-modal').removeClass('hidden flex').addClass('flex');
     });
 
     $('#cancel-delete').on('click', function () {
         $('#delete-confirmation-modal').removeClass('flex').addClass('hidden');
-        deleteTodoItemId = null;
+        deleteTodoId = null;
     });
 
     $('#confirm-delete').on('click', function () {
-        if (deleteTodoItemId) {
-            removeTodoItem(deleteTodoItemId);
+        if (deleteTodoId) {
+            removeTodo(deleteTodoId);
             $('#delete-confirmation-modal').removeClass('flex').addClass('hidden');
-            deleteTodoItemId = null;
+            deleteTodoId = null;
         }
     });
 
-    fetchTodoItems();
+    fetchTodos();
 });

@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Dddify.Domain;
 
 public abstract class Enumeration : IComparable
 {
-    [Required]
     public string Name { get; private set; }
 
     public int Id { get; private set; }

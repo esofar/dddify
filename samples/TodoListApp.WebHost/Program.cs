@@ -1,23 +1,30 @@
 using Dddify;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoListApp.Infrastructure.Contexts;
+using TodoListApp.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDddify(cfg =>
 {
+    cfg.UseApiResultWrapper();
     cfg.UseJsonLocalization();
 
-    cfg.UseApiResultWrapper();
-
-    cfg.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite(builder.Configuration.GetConnectionString("Default"))
-            .EnableSensitiveDataLogging());
+    cfg.AddDbContext<AppDbContext>(
+        options => options.UseSqlite(builder.Configuration.GetConnectionString("Default")));
 });
+
+//builder.Services.Configure<ApiBehaviorOptions>(options =>
+//{
+//    options.SuppressModelStateInvalidFilter = true;
+//});
 
 var app = builder.Build();
 

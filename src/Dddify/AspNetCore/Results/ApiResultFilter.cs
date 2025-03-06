@@ -1,18 +1,11 @@
-﻿using Dddify.System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Dddify.AspNetCore.Results;
 
-public class ApiResultFilter : IAsyncResultFilter
+public class ApiResultFilter(IApiResultWrapper apiResultWrapper) : IAsyncResultFilter
 {
-    private readonly IApiResultWrapper _apiResultWrapper;
-
-    public ApiResultFilter(IApiResultWrapper apiResultWrapper)
-    {
-        _apiResultWrapper = apiResultWrapper;
-    }
-
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
         var isApiController = context.ActionDescriptor.HasAttrbute<ApiControllerAttribute>();
@@ -22,9 +15,9 @@ public class ApiResultFilter : IAsyncResultFilter
         {
             context.Result = context.Result switch
             {
-                ObjectResult objectResult => new(_apiResultWrapper.Succeed(objectResult.Value)),
-                EmptyResult _ => new(_apiResultWrapper.Succeed()),
-                _ => new ObjectResult(_apiResultWrapper.Failed()),
+                ObjectResult objectResult => new(apiResultWrapper.Succeed(objectResult.Value)),
+                EmptyResult _ => new(apiResultWrapper.Succeed()),
+                _ => new ObjectResult(apiResultWrapper.Failed()),
             };
         }
 

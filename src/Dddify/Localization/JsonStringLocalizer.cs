@@ -128,6 +128,6 @@ public partial class JsonStringLocalizer : IStringLocalizer
             currentCulture = currentCulture.Parent;
         }
 
-        return resourceNames;
+        return resourceNames?.ToList();
     }
 }

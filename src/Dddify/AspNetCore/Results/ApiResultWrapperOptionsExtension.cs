@@ -13,11 +13,11 @@ public class ApiResultWrapperOptionsExtension(Action<ApiResultWrapperOptions>? c
 
         services.AddTransient<IApiResultWrapper, ApiResultWrapper>();
 
-        // Customise default API behaviour.
-        services.Configure<ApiBehaviorOptions>(options =>
-        {
-            options.SuppressModelStateInvalidFilter = true;
-        });
+        //// Customise default API behaviour.
+        //services.Configure<ApiBehaviorOptions>(options =>
+        //{
+        //    options.SuppressModelStateInvalidFilter = true;
+        //});
 
         // Customise default MVC behaviour.
         services.Configure<MvcOptions>(options =>

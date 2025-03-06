@@ -1,5 +1,5 @@
-﻿using Dddify.Guids;
-using Dddify.Identity;
+﻿using Dddify.EntityFrameworkCore;
+using Dddify.Guids;
 using Dddify.Messaging.Behaviours;
 using Dddify.Timing;
 using FluentValidation;
@@ -16,11 +16,10 @@ public static class ServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         var optionsBuilder = new DddifyOptionsBuilder();
-
         optionsAction?.Invoke(optionsBuilder);
         var options = optionsBuilder.Options;
 
-        var assemblies = DependencyContext.Default.GetProjectAndDddifyAssemblies();
+        var assemblies = DependencyContext.Default.GetProjectAssemblies();
 
         services.AddValidatorsFromAssemblies(assemblies);
 
@@ -28,36 +27,35 @@ public static class ServiceCollectionExtensions
         {
             cfg.RegisterServicesFromAssemblies(assemblies);
 
-            options.MediatrOptions?.Invoke(cfg);
-
             if (options.ValidationBehaviourEnabled)
                 cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
 
             if (options.UnitOfWorkBehaviorEnabled)
                 cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+
+            options.ConfigureMediatr?.Invoke(cfg);
         });
 
-        services.Scan(cfg =>
+        services.Scan(scan =>
         {
-            cfg.FromAssemblies(assemblies)
-                .RegisterAttributeDependencies()
+            var selector = scan.FromAssemblies(assemblies);
+
+            selector.RegisterAttributeDependencies()
                 .RegisterDomainServices()
                 .RegisterRepositories();
 
-            options.ScrutorOptions?.Invoke(cfg);
+            options.ConfigureScrutor?.Invoke(selector);
         });
 
-        var config = TypeAdapterConfig.GlobalSettings;
-        config.Scan(assemblies);
+        TypeAdapterConfig.GlobalSettings.Scan(assemblies);
 
         services.AddSingleton<IClock>(_ => new Clock(options.DateTimeKind));
-
         services.AddTransient<IGuidGenerator>(_ => new SequentialGuidGenerator(options.SequentialGuidType));
 
-        services.AddHttpContextAccessor();
-        services.AddScoped<ICurrentUser, HttpContextUser>();
-
-        options.Extensions.ForEach(extension => extension.ConfigureServices(services));
+        foreach (var extension in options.Extensions)
+        {
+            extension.ConfigureServices(services);
+        }
 
         return services;
     }

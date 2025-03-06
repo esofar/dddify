@@ -27,4 +27,15 @@ public static class TypeExtensions
     {
         return type.IsGenericType && !type.IsAbstract && type.GetInterface(genericType.Name) != null;
     }
+
+    public static string GetGenericTypeName(this Type type)
+    {
+        if (type.IsGenericType)
+        {
+            var genericTypes = string.Join(",", type.GetGenericArguments().Select(t => t.Name).ToArray());
+            return $"{type.Name.Remove(type.Name.IndexOf('`'))}<{genericTypes}>";
+        }
+
+        return type.Name;
+    }
 }

@@ -8,17 +8,15 @@ namespace Dddify;
 public partial class DddifyOptions
 {
     private readonly ConcurrentDictionary<Type, IOptionsExtension> _extensionsMap;
-    private readonly List<Type> _openBehaviors;
 
     public DddifyOptions()
     {
         _extensionsMap = new ConcurrentDictionary<Type, IOptionsExtension>();
-        _openBehaviors = [];
     }
 
-    public Action<MediatRServiceConfiguration>? MediatrOptions { get; set; }
+    public Action<MediatRServiceConfiguration>? ConfigureMediatr { get; set; }
 
-    public Action<ITypeSourceSelector>? ScrutorOptions { get; set; }
+    public Action<IImplementationTypeSelector>? ConfigureScrutor { get; set; }
 
     public List<IOptionsExtension> Extensions => [.. _extensionsMap.Values];
 
