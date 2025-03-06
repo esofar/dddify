@@ -5,6 +5,7 @@ import pkg from '../package.json' assert { type: 'json' }
 export default defineConfig({
   lang: 'zh',
   title: "Dddify",
+  base: '/dddify/',
   description: "A VitePress Site",
   srcDir: 'src',
   cleanUrls: true,
