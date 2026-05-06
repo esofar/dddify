@@ -1,0 +1,305 @@
+name: NuGet Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to release, for example v1.0.0"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nuget-release-${{ github.ref || inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  BUILD_CONFIGURATION: Release
+  PACKAGE_PROJECT: src/Dddify/Dddify.csproj
+  PACKAGE_OUTPUT: artifacts/packages
+
+jobs:
+  create-release:
+    name: Release
+    runs-on: ubuntu-latest
+    environment: nuget
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve tag
+        id: tag
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/}"
+          else
+            TAG_NAME="${{ inputs.tag }}"
+            git fetch --tags --force
+          fi
+
+          if [[ -z "${TAG_NAME}" ]]; then
+            echo "Tag name is required."
+            exit 1
+          fi
+
+          echo "name=${TAG_NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout tag
+        run: git checkout ${{ steps.tag.outputs.name }}
+
+      - name: Resolve commit range
+        id: range
+        shell: bash
+        run: |
+          CURRENT_TAG="${{ steps.tag.outputs.name }}"
+          PREVIOUS_TAG="$(git tag --sort=-version:refname | grep -Fxv "$CURRENT_TAG" | head -n 1 || true)"
+
+          if [[ -n "$PREVIOUS_TAG" ]]; then
+            RANGE="${PREVIOUS_TAG}..${CURRENT_TAG}"
+            echo "previous=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
+          else
+            RANGE="${CURRENT_TAG}"
+            echo "previous=" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "range=${RANGE}" >> "$GITHUB_OUTPUT"
+          echo "Resolved commit range: ${RANGE}"
+
+      - name: Verify package version matches tag
+        shell: pwsh
+        run: |
+          [xml]$props = Get-Content "Directory.Build.props"
+          $prefix = $props.Project.PropertyGroup.VersionPrefix
+          $suffix = $props.Project.PropertyGroup.VersionSuffix
+          $packageVersion = if ([string]::IsNullOrWhiteSpace($suffix)) { $prefix } else { "$prefix-$suffix" }
+          $tagVersion = "${{ steps.tag.outputs.version }}"
+
+          if ($packageVersion -ne $tagVersion) {
+            throw "Tag version '$tagVersion' does not match package version '$packageVersion'."
+          }
+
+          Write-Host "Validated package version: $packageVersion"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: |
+            Directory.Build.props
+            src/**/*.csproj
+
+      - name: Restore
+        run: dotnet restore ${{ env.PACKAGE_PROJECT }}
+
+      - name: Build
+        run: dotnet build ${{ env.PACKAGE_PROJECT }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore /p:ContinuousIntegrationBuild=true
+
+      - name: Test
+        shell: pwsh
+        run: |
+          $testProjects = Get-ChildItem -Recurse -Filter *.csproj |
+            Where-Object {
+              $_.FullName -notmatch '(\\|/)(samples)(\\|/)' -and
+              (
+                $_.FullName -match 'Tests?\.csproj$' -or
+              $_.DirectoryName -match '(\\|/)(tests|test)(\\|/)'
+              )
+            } |
+            Select-Object -ExpandProperty FullName
+
+          if (-not $testProjects) {
+            Write-Host "No test projects found. Skipping dotnet test."
+            exit 0
+          }
+
+          foreach ($project in $testProjects) {
+            dotnet test $project --configuration $env:BUILD_CONFIGURATION --no-build --logger "trx;LogFileName=$(Split-Path $project -Leaf).trx"
+          }
+
+      - name: Pack
+        run: |
+          mkdir -p ${{ env.PACKAGE_OUTPUT }}
+          dotnet pack ${{ env.PACKAGE_PROJECT }} \
+            --configuration ${{ env.BUILD_CONFIGURATION }} \
+            --no-build \
+            --output ${{ env.PACKAGE_OUTPUT }} \
+            /p:ContinuousIntegrationBuild=true
+
+      - name: Generate release notes
+        id: notes
+        shell: bash
+        run: |
+          VERSION="${{ steps.tag.outputs.version }}"
+          RANGE="${{ steps.range.outputs.range }}"
+          COMMITS="$(git log "${RANGE}" --pretty=format:'%s|%h' --no-merges || true)"
+
+          FEATURES=""
+          FIXES=""
+          DOCS=""
+          REFACTORING=""
+          PERFORMANCE=""
+          TESTS=""
+          BUILDING=""
+          CHORES=""
+
+          while IFS='|' read -r SUBJECT HASH; do
+            [[ -z "${SUBJECT}" ]] && continue
+
+            ENTRY="- ${SUBJECT}"
+
+            case "${SUBJECT}" in
+              feat:*)
+                FEATURES="${FEATURES}${ENTRY}"$'\n'
+                ;;
+              fix:*)
+                FIXES="${FIXES}${ENTRY}"$'\n'
+                ;;
+              docs:*|doc:*)
+                DOCS="${DOCS}${ENTRY}"$'\n'
+                ;;
+              refactor:*)
+                REFACTORING="${REFACTORING}${ENTRY}"$'\n'
+                ;;
+              perf:*)
+                PERFORMANCE="${PERFORMANCE}${ENTRY}"$'\n'
+                ;;
+              test:*)
+                TESTS="${TESTS}${ENTRY}"$'\n'
+                ;;
+              build:*|ci:*|deps:*)
+                BUILDING="${BUILDING}${ENTRY}"$'\n'
+                ;;
+              chore:*)
+                CHORES="${CHORES}${ENTRY}"$'\n'
+                ;;
+              *)
+                ;;
+            esac
+          done <<< "${COMMITS}"
+
+          {
+            echo "body<<EOF"
+            echo "## 🚀 Release v${VERSION}"
+            echo
+            if [[ -n "${FEATURES}" ]]; then
+              echo "### ✨ Features"
+              printf '%s' "${FEATURES}"
+              echo
+            fi
+
+            if [[ -n "${FIXES}" ]]; then
+              echo "### 🐛 Fixes"
+              printf '%s' "${FIXES}"
+              echo
+            fi
+
+            if [[ -n "${DOCS}" ]]; then
+              echo "### 📝 Documentation"
+              printf '%s' "${DOCS}"
+              echo
+            fi
+
+            if [[ -n "${REFACTORING}" ]]; then
+              echo "### ♻️ Refactoring"
+              printf '%s' "${REFACTORING}"
+              echo
+            fi
+
+            if [[ -n "${PERFORMANCE}" ]]; then
+              echo "### ⚡ Performance"
+              printf '%s' "${PERFORMANCE}"
+              echo
+            fi
+
+            if [[ -n "${TESTS}" ]]; then
+              echo "### 🧪 Tests"
+              printf '%s' "${TESTS}"
+              echo
+            fi
+
+            if [[ -n "${BUILDING}" ]]; then
+              echo "### 🏗️ Build & Dependencies"
+              printf '%s' "${BUILDING}"
+              echo
+            fi
+
+            if [[ -n "${CHORES}" ]]; then
+              echo "### 🔧 Chore"
+              printf '%s' "${CHORES}"
+              echo
+            fi
+
+            if [[ -z "${FEATURES}${FIXES}${DOCS}${REFACTORING}${PERFORMANCE}${TESTS}${BUILDING}${CHORES}" ]]; then
+              echo "- No notable changes captured from commit messages."
+              echo
+            fi
+
+            echo "---"
+            echo
+            echo "### 📦 Installation"
+            echo
+            echo "\`\`\`bash"
+            echo "dotnet add package Dddify --version ${VERSION}"
+            echo "\`\`\`"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Verify NuGet API key
+        shell: bash
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [[ -z "${NUGET_API_KEY}" ]]; then
+            echo "NUGET_API_KEY secret is not configured."
+            exit 1
+          fi
+
+      - name: Publish packages to NuGet
+        shell: bash
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          shopt -s nullglob
+
+          for package in "${{ env.PACKAGE_OUTPUT }}"/*.nupkg; do
+            if [[ "$package" == *.snupkg ]]; then
+              continue
+            fi
+
+            dotnet nuget push "$package" \
+              --api-key "${NUGET_API_KEY}" \
+              --source "https://api.nuget.org/v3/index.json" \
+              --skip-duplicate
+          done
+
+          for symbol in "${{ env.PACKAGE_OUTPUT }}"/*.snupkg; do
+            dotnet nuget push "$symbol" \
+              --api-key "${NUGET_API_KEY}" \
+              --source "https://api.nuget.org/v3/index.json" \
+              --skip-duplicate
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: ${{ steps.tag.outputs.name }}
+          body: ${{ steps.notes.outputs.body }}
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(steps.tag.outputs.version, '-') }}
+          files: |
+            ${{ env.PACKAGE_OUTPUT }}/*.nupkg
+            ${{ env.PACKAGE_OUTPUT }}/*.snupkg

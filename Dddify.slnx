@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/TodoApp.Application/TodoApp.Application.csproj" Id="eac4d484-99b0-46b0-a2f8-3d624f827566" />
+    <Project Path="samples/TodoApp.Domain/TodoApp.Domain.csproj" Id="30ecd507-ae6f-4065-8780-58a32a680581" />
+    <Project Path="samples/TodoApp.Infrastructure/TodoApp.Infrastructure.csproj" Id="5256c49a-c1a4-47c4-8933-6ea1bee3e85b" />
+    <Project Path="samples/TodoApp.Web/TodoApp.Web.csproj" Id="5c9cc8c3-dbfa-4918-8f03-afb587a765e8" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Dddify/Dddify.csproj" />
+  </Folder>
+</Solution>

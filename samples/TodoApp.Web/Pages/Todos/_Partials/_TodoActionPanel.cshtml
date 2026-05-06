@@ -1,0 +1,47 @@
+@model TodoApp.Web.Pages.Todos.DetailsModel
+@using TodoApp.Domain.Aggregates.Todos
+
+<section class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-orange-700">Actions</p>
+    </div>
+
+    <div class="mt-5 flex flex-col gap-3">
+        @if (Model.Todo.Status == TodoStatus.Active)
+        {
+            <form method="post" asp-page-handler="Complete">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ReturnFilter" />
+                <input type="hidden" asp-for="ReturnSearchTerm" />
+                <button type="submit" class="w-full rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-emerald-700">Complete</button>
+            </form>
+        }
+        else
+        {
+            <form method="post" asp-page-handler="Reopen">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ReturnFilter" />
+                <input type="hidden" asp-for="ReturnSearchTerm" />
+                <button type="submit" class="w-full rounded-2xl bg-sky-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-sky-700">Reopen</button>
+            </form>
+        }
+
+        <form method="post" asp-page-handler="TogglePin">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ReturnFilter" />
+            <input type="hidden" asp-for="ReturnSearchTerm" />
+            <button type="submit" class="w-full rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800 transition hover:bg-amber-100">
+                @(Model.Todo.IsPinned ? "Unpin" : "Pin")
+            </button>
+        </form>
+
+        <form method="post" asp-page-handler="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ReturnFilter" />
+            <input type="hidden" asp-for="ReturnSearchTerm" />
+            <button type="submit" class="w-full rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 transition hover:bg-rose-100">
+                Delete
+            </button>
+        </form>
+    </div>
+</section>

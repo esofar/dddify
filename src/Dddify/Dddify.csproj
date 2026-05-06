@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>Dddify</AssemblyName>
+		<PackageId>Dddify</PackageId>
+		<Title>Dddify</Title>
+		<Description>A lightweight DDD-based integration framework for modern ASP.NET Core applications.</Description>
+		<PackageTags>ddd;cqrs;clean-ddd;clean-architecture;aspnetcore;efcore</PackageTags>
+		<PackageReadmeFile>package-readme.md</PackageReadmeFile>
+		<PackageIcon>package-icon.png</PackageIcon>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\assets\package-readme.md" Pack="true" PackagePath="\" Visible="false" Link="package-readme.md" />
+		<None Include="..\..\assets\package-icon.png" Pack="true" PackagePath="\" Visible="false" Link="package-icon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="[10.0.0,)" />
+		<PackageReference Include="FluentValidation" Version="12.1.1" />
+		<PackageReference Include="Mapster" Version="10.0.7" />
+		<PackageReference Include="MediatR" Version="12.5.0" />
+		<PackageReference Include="Scrutor" Version="7.0.0" />
+	</ItemGroup>
+
+</Project>

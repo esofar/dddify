@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TodoApp</title>
+    <link rel="stylesheet" href="~/css/tailwind.min.css" asp-append-version="true" />
+</head>
+<body class="min-h-screen bg-stone-100 text-stone-900 antialiased">
+    <div class="min-h-screen bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.14),_transparent_24%),radial-gradient(circle_at_left_center,_rgba(251,191,36,0.12),_transparent_22%),linear-gradient(180deg,_#fafaf9_0%,_#f5f5f4_100%)]">
+        <header class="border-b border-white/60 bg-white/80 backdrop-blur">
+            <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+                <a asp-page="/Todos/Index" class="group inline-flex items-center gap-3">
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 text-sm font-bold tracking-wide text-white shadow-soft">
+                        TD
+                    </span>
+                    <span class="flex flex-col">
+                        <span class="text-lg font-semibold tracking-tight text-stone-900 transition group-hover:text-orange-700">TodoApp</span>
+                        <span class="text-xs uppercase tracking-[0.28em] text-stone-400">Dddify Sample</span>
+                    </span>
+                </a>
+
+                <nav class="flex items-center gap-3">
+                    <a href="https://github.com/esofar/dddify/tree/main/samples"
+                       target="_blank"
+                       rel="noreferrer"
+                       class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-600 transition hover:border-stone-300 hover:text-stone-900"
+                       title="Open TodoApp samples on GitHub">
+                        <svg viewBox="0 0 24 24" class="h-5 w-5 fill-current" aria-hidden="true">
+                            <path d="M12 .5C5.649.5.5 5.649.5 12c0 5.084 3.292 9.398 7.86 10.92.575.106.785-.25.785-.556 0-.274-.01-1-.016-1.962-3.197.695-3.872-1.54-3.872-1.54-.523-1.328-1.277-1.682-1.277-1.682-1.044-.713.079-.698.079-.698 1.155.081 1.762 1.186 1.762 1.186 1.026 1.758 2.693 1.25 3.349.956.104-.743.402-1.25.731-1.538-2.552-.29-5.236-1.276-5.236-5.681 0-1.255.448-2.282 1.182-3.086-.119-.29-.512-1.458.112-3.04 0 0 .964-.309 3.159 1.179A10.98 10.98 0 0 1 12 6.07c.974.005 1.955.132 2.872.388 2.193-1.488 3.155-1.179 3.155-1.179.626 1.582.233 2.75.114 3.04.736.804 1.18 1.831 1.18 3.086 0 4.416-2.688 5.388-5.248 5.673.414.357.783 1.06.783 2.137 0 1.543-.014 2.788-.014 3.168 0 .309.207.668.79.555C20.21 21.394 23.5 17.082 23.5 12 23.5 5.649 18.351.5 12 .5Z" />
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="px-4 py-8 sm:px-6 lg:px-8">
+            @RenderBody()
+        </main>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

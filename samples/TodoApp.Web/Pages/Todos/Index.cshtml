@@ -1,0 +1,25 @@
+@page "/todos"
+@model TodoApp.Web.Pages.Todos.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="mx-auto max-w-7xl space-y-6">
+    <div class="grid gap-6 lg:grid-cols-[280px,minmax(0,1fr),320px]">
+        <partial name="_Partials/_DashboardSidebar" model="Model" />
+
+        <main class="space-y-6">
+            <partial name="_Partials/_StatsCards" model="Model.TodoList.Stats" />
+            <partial name="_Partials/_TodoSearchSection" model="Model" />
+            <partial name="_Partials/_TodoListSection" model="Model" />
+        </main>
+
+        <aside class="space-y-6">
+            <partial name="_Partials/_QuickCreateForm" model="Model" />
+        </aside>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

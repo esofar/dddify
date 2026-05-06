@@ -1,0 +1,70 @@
+name: .NET CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dotnet-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  BUILD_CONFIGURATION: Release
+  PACKAGE_PROJECT: src/Dddify/Dddify.csproj
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: |
+            Directory.Build.props
+            src/**/*.csproj
+
+      - name: Restore
+        run: dotnet restore ${{ env.PACKAGE_PROJECT }}
+
+      - name: Build
+        run: dotnet build ${{ env.PACKAGE_PROJECT }} --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore /p:ContinuousIntegrationBuild=true
+
+      - name: Test
+        shell: pwsh
+        run: |
+          $testProjects = Get-ChildItem -Recurse -Filter *.csproj |
+            Where-Object {
+              $_.FullName -notmatch '(\\|/)(samples)(\\|/)' -and
+              (
+                $_.FullName -match 'Tests?\.csproj$' -or
+              $_.DirectoryName -match '(\\|/)(tests|test)(\\|/)'
+              )
+            } |
+            Select-Object -ExpandProperty FullName
+
+          if (-not $testProjects) {
+            Write-Host "No test projects found. Skipping dotnet test."
+            exit 0
+          }
+
+          foreach ($project in $testProjects) {
+            dotnet test $project --configuration $env:BUILD_CONFIGURATION --no-build --logger "trx;LogFileName=$(Split-Path $project -Leaf).trx"
+          }

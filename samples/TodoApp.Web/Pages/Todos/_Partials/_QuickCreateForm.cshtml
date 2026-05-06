@@ -1,0 +1,42 @@
+@using TodoApp.Domain.Aggregates.Todos
+@model TodoApp.Web.Pages.Todos.IndexModel
+
+<section class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-orange-700">Quick Create</p>
+    </div>
+
+    <form method="post" asp-page-handler="Create" class="mt-4 grid gap-4">
+        <input type="hidden" asp-for="Filter" />
+        <input type="hidden" asp-for="SearchTerm" />
+
+        <div>
+            <label asp-for="Input.Title" class="mb-2 block text-sm font-medium text-stone-700">Title</label>
+            <input asp-for="Input.Title" class="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none focus:border-orange-300 focus:bg-white focus:ring-4 focus:ring-orange-100" autocomplete="off" placeholder="What needs to be done?" />
+            <span asp-validation-for="Input.Title" class="mt-2 block text-sm text-rose-600"></span>
+        </div>
+
+        <div>
+            <label asp-for="Input.Description" class="mb-2 block text-sm font-medium text-stone-700">Notes</label>
+            <textarea asp-for="Input.Description" rows="4" class="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none focus:border-orange-300 focus:bg-white focus:ring-4 focus:ring-orange-100" placeholder="Add details, notes, or ideas."></textarea>
+            <span asp-validation-for="Input.Description" class="mt-2 block text-sm text-rose-600"></span>
+        </div>
+
+        <div>
+            <label asp-for="Input.Priority" class="mb-2 block text-sm font-medium text-stone-700">Priority</label>
+            <select asp-for="Input.Priority" asp-items="Html.GetEnumSelectList<TodoPriority>()" class="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none focus:border-orange-300 focus:bg-white focus:ring-4 focus:ring-orange-100"></select>
+        </div>
+
+        <div>
+            <label asp-for="Input.DueDate" class="mb-2 block text-sm font-medium text-stone-700">Due date</label>
+            <input asp-for="Input.DueDate" class="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none focus:border-orange-300 focus:bg-white focus:ring-4 focus:ring-orange-100" />
+            <span asp-validation-for="Input.DueDate" class="mt-2 block text-sm text-rose-600"></span>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="inline-flex w-full items-center justify-center rounded-2xl bg-orange-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-orange-700">
+                Create todo
+            </button>
+        </div>
+    </form>
+</section>

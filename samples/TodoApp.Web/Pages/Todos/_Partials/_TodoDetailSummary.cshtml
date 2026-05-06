@@ -1,0 +1,47 @@
+@model TodoApp.Application.Dtos.Todos.TodoDto
+@using TodoApp.Domain.Aggregates.Todos
+
+<section class="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+    <div class="border-b border-stone-100 pb-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-orange-700">Summary</p>
+        <h2 class="mt-2 text-xl font-semibold text-stone-900">@Model.Title</h2>
+    </div>
+
+    <div class="mt-5 flex flex-wrap items-center gap-2">
+        <span class="rounded-full px-2.5 py-1 text-xs font-medium @GetPriorityClass(Model.Priority)">@Model.Priority</span>
+        <span class="rounded-full px-2.5 py-1 text-xs font-medium @GetStatusClass(Model.Status)">@Model.Status</span>
+        @if (Model.IsPinned)
+        {
+            <span class="rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-700">Pinned</span>
+        }
+    </div>
+
+    <div class="mt-5 rounded-2xl bg-stone-50 px-4 py-4">
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <p class="text-sm leading-7 text-stone-600">@Model.Description</p>
+        }
+        else
+        {
+            <p class="text-sm leading-7 text-stone-400">No notes yet. Add details below when the task needs more context.</p>
+        }
+    </div>
+</section>
+
+@functions {
+    private static string GetPriorityClass(TodoPriority priority) => priority switch
+    {
+        TodoPriority.Low => "bg-emerald-50 text-emerald-700",
+        TodoPriority.Medium => "bg-amber-50 text-amber-700",
+        TodoPriority.High => "bg-orange-50 text-orange-700",
+        TodoPriority.Urgent => "bg-rose-50 text-rose-700",
+        _ => "bg-stone-100 text-stone-700"
+    };
+
+    private static string GetStatusClass(TodoStatus status) => status switch
+    {
+        TodoStatus.Active => "bg-sky-50 text-sky-700",
+        TodoStatus.Completed => "bg-emerald-50 text-emerald-700",
+        _ => "bg-stone-100 text-stone-700"
+    };
+}

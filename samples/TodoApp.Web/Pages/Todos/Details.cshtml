@@ -1,0 +1,46 @@
+@page "/todos/{id:guid}"
+@model TodoApp.Web.Pages.Todos.DetailsModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<section class="mx-auto max-w-5xl space-y-6">
+    <div class="flex justify-end">
+        <a asp-page="/Todos/Index"
+               asp-route-filter="@Model.ReturnFilter"
+               asp-route-searchTerm="@Model.ReturnSearchTerm"
+               class="inline-flex items-center justify-center rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-medium text-stone-700 transition hover:border-stone-300 hover:bg-stone-50">
+            Back to list
+        </a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            @Model.StatusMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr),320px]">
+        <main class="space-y-6">
+            <partial name="_Partials/_TodoDetailSummary" model="Model.Todo" />
+            <partial name="_Partials/_TodoEditForm" model="Model" />
+        </main>
+
+        <aside class="space-y-6">
+            <partial name="_Partials/_TodoActionPanel" model="Model" />
+            <partial name="_Partials/_TodoMetadataPanel" model="Model.Todo" />
+        </aside>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
