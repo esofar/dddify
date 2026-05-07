@@ -1,7 +1,5 @@
 import { defineConfig } from 'vitepress'
 
-const base = '/dddify/'
-
 const zhNav = [
   { text: '文档', link: '/guide/getting-started' },
   { text: '赞助', link: '/sponsors' },
@@ -81,10 +79,10 @@ const enSidebar = {
 }
 
 export default defineConfig({
-  base,
   title: 'Dddify',
   description: 'A lightweight DDD-based integration framework for modern ASP.NET Core applications.',
   srcDir: 'src',
+  base: '/',
   cleanUrls: true,
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
