@@ -19,7 +19,10 @@ public class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork, ILo
 
         if (UnitOfWorkBehaviorCache<TRequest>.ShouldSkip)
         {
-            logger.LogInformation("Skipping unit of work for {CommandName} because `SkipUnitOfWorkBehaviorAttribute` is applied.", commandName);
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("Skipping unit of work for {CommandName} because `SkipUnitOfWorkBehaviorAttribute` is applied.", commandName);
+            }
 
             return await next(cancellationToken);
         }
@@ -28,13 +31,20 @@ public class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork, ILo
 
         if (unitOfWork.CurrentTransaction is null)
         {
-            logger.LogInformation("Starting new transaction for {CommandName}.", commandName);
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("Starting new transaction for {CommandName}.", commandName);
+            }
+
             await unitOfWork.BeginTransactionAsync(cancellationToken);
             startedTransaction = true;
         }
         else
         {
-            logger.LogInformation("Joining existing transaction for {CommandName}.", commandName);
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("Joining existing transaction for {CommandName}.", commandName);
+            }
         }
 
         try
@@ -45,17 +55,24 @@ public class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork, ILo
 
             if (startedTransaction)
             {
-                logger.LogInformation("Committing transaction for {CommandName}.", commandName);
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    logger.LogDebug("Committing transaction for {CommandName}.", commandName);
+                }
+
                 await unitOfWork.CommitTransactionAsync(cancellationToken);
             }
 
             return response;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             if (startedTransaction)
             {
-                logger.LogError(ex, "Rolling back transaction for {CommandName} due to exception.", commandName);
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    logger.LogDebug("Rolling back transaction for {CommandName} due to exception.", commandName);
+                }
 
                 try
                 {
@@ -65,10 +82,6 @@ public class UnitOfWorkBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork, ILo
                 {
                     logger.LogError(rollbackEx, "An error occurred during transaction rollback for {CommandName}.", commandName);
                 }
-            }
-            else
-            {
-                logger.LogError(ex, "An error occurred during {CommandName} execution. Transaction management handled by outer scope.", commandName);
             }
 
             throw;
