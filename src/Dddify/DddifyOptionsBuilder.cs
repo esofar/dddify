@@ -161,10 +161,39 @@ public class DddifyOptionsBuilder
     /// <summary>
     /// Registers the specified <see cref="DbContext"/> and enables Dddify unit of work integration for it.
     /// </summary>
+    /// <typeparam name="TContextService">The service type used to resolve the context from the container.</typeparam>
+    /// <typeparam name="TContextImplementation">The concrete <see cref="DbContext"/> implementation type.</typeparam>
+    /// <param name="optionsAction">
+    /// An action used to configure the <see cref="DbContextOptionsBuilder"/> with access to the current
+    /// <see cref="IServiceProvider"/>, such as resolving configuration or hosting environment services.
+    /// </param>
+    /// <returns>The current <see cref="DddifyOptionsBuilder"/> instance for chaining.</returns>
+    public DddifyOptionsBuilder AddDbContextWithUnitOfWork<TContextService, TContextImplementation>(
+        Action<IServiceProvider, DbContextOptionsBuilder> optionsAction)
+        where TContextImplementation : DbContext, TContextService
+        => WithExtension(new DbContextUnitOfWorkOptionsExtension<TContextService, TContextImplementation>(optionsAction));
+
+    /// <summary>
+    /// Registers the specified <see cref="DbContext"/> and enables Dddify unit of work integration for it.
+    /// </summary>
     /// <typeparam name="TContext">The <see cref="DbContext"/> type to register.</typeparam>
     /// <param name="optionsAction">An optional action used to configure the <see cref="DbContextOptionsBuilder"/>.</param>
     /// <returns>The current <see cref="DddifyOptionsBuilder"/> instance for chaining.</returns>
     public DddifyOptionsBuilder AddDbContextWithUnitOfWork<TContext>(Action<DbContextOptionsBuilder>? optionsAction = null)
+        where TContext : DbContext
+        => AddDbContextWithUnitOfWork<TContext, TContext>(optionsAction);
+
+    /// <summary>
+    /// Registers the specified <see cref="DbContext"/> and enables Dddify unit of work integration for it.
+    /// </summary>
+    /// <typeparam name="TContext">The <see cref="DbContext"/> type to register.</typeparam>
+    /// <param name="optionsAction">
+    /// An action used to configure the <see cref="DbContextOptionsBuilder"/> with access to the current
+    /// <see cref="IServiceProvider"/>, such as resolving configuration or hosting environment services.
+    /// </param>
+    /// <returns>The current <see cref="DddifyOptionsBuilder"/> instance for chaining.</returns>
+    public DddifyOptionsBuilder AddDbContextWithUnitOfWork<TContext>(
+        Action<IServiceProvider, DbContextOptionsBuilder> optionsAction)
         where TContext : DbContext
         => AddDbContextWithUnitOfWork<TContext, TContext>(optionsAction);
 }
