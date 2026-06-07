@@ -42,7 +42,7 @@ public class ApiResult<T> : ApiResult
     /// Gets or sets the response payload.
     /// </summary>
     [JsonPropertyOrder(1)]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public T? Data { get; set; }
 }
 
