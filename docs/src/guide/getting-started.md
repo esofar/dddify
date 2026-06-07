@@ -101,11 +101,13 @@ Install-Package Microsoft.EntityFrameworkCore.Tools -ProjectName MyCompany.MyPro
 ├── MyCompany.MyProject.slnx                    # 解决方案文件
 ├── src/
 │   ├── MyCompany.MyProject.Domain/             # 领域层
-│   │   ├── Aggregates/                         # 聚合根、实体、值对象、枚举类
+│   │   ├── Aggregates/                         # 聚合根、子实体以及聚合专属值对象、枚举类
 │   │   ├── Events/                             # 领域事件
 │   │   ├── Exceptions/                         # 领域异常
-│   │   ├── Services/                           # 领域服务
 │   │   ├── Repositories/                       # 仓储契约
+│   │   ├── ValueObjects/                       # 通用值对象
+│   │   ├── Enums/                       		# 通用枚举类
+│   │   ├── Services/                           # 领域服务
 │   │   └── Shared/                             # 共享模型
 │   ├── MyCompany.MyProject.Application/        # 应用层
 │   │   ├── Commands/                           # 命令、验证器和处理器
