@@ -119,20 +119,55 @@ public class ApplyEntityStateInterceptor(
     {
         if (entry.Entity is ISoftDeletable entity)
         {
-            entry.Reload();
+            entry.State = EntityState.Unchanged;
+            RestoreDeletedOwnedEntries(entry);
 
-            entry.State = EntityState.Modified;
             entity.IsDeleted = true;
+            MarkPropertyAsModified(entry, nameof(ISoftDeletable.IsDeleted));
 
             if (entry.Entity is IHasDeletedBy hasDeletedBy)
             {
                 hasDeletedBy.DeletedBy = GetAuditUserId();
+                MarkPropertyAsModified(entry, nameof(IHasDeletedBy.DeletedBy));
             }
 
             if (entry.Entity is IHasDeletedAt hasDeletedAt)
             {
                 hasDeletedAt.DeletedAt = GetAuditTimestamp();
+                MarkPropertyAsModified(entry, nameof(IHasDeletedAt.DeletedAt));
             }
+        }
+    }
+
+    /// <summary>
+    /// Restores owned entries that were marked as deleted as part of removing a soft-deletable owner.
+    /// </summary>
+    /// <param name="entry">The soft-deletable owner entry.</param>
+    protected static void RestoreDeletedOwnedEntries(EntityEntry entry)
+    {
+        var ownedEntries = entry.Context.ChangeTracker
+            .Entries()
+            .Where(entry =>
+                entry.State == EntityState.Deleted &&
+                entry.Metadata.IsOwned())
+            .ToList();
+
+        foreach (var ownedEntry in ownedEntries)
+        {
+            ownedEntry.State = EntityState.Unchanged;
+        }
+    }
+
+    /// <summary>
+    /// Marks a mapped property as modified when it exists on the current entry.
+    /// </summary>
+    /// <param name="entry">The tracked entity entry.</param>
+    /// <param name="propertyName">The mapped property name.</param>
+    protected static void MarkPropertyAsModified(EntityEntry entry, string propertyName)
+    {
+        if (entry.Metadata.FindProperty(propertyName) is not null)
+        {
+            entry.Property(propertyName).IsModified = true;
         }
     }
 
